@@ -14,6 +14,12 @@ public:
 	{
 		xReactor::start();
 	}
+	xReactorwithThread(){}
+	~xReactorwithThread()
+	{
+		destory();
+		printf("~xReactorwithThread\n");
+	}
 	void startReactorWithThread()
 	{
 		Threadbase::start();

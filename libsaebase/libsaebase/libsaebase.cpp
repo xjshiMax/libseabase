@@ -18,7 +18,7 @@ public:
 };
 int main()
 {
-	xsimpleThreadPool mypool("thin");
+	/*xsimpleThreadPool mypool("thin");
 	mypool.initPool(4);
 	mypool.startPool();
 	mytask mtask;
@@ -37,7 +37,19 @@ int main()
 		}
 		//sleep(2);
 		printf("2 seconds later...\n");
-	}   
+	} */
+
+	xthreadPool mypool("greaterpool");
+	mypool.initPool(4);
+	mypool.startPool();
+
+	for(int i=0;i<2000;i++)
+	{
+		mytask *mtask=new mytask;
+		mypool.trypushObj(*mtask);
+
+	}
+	mypool.waitforAllTaskDone();
 	system("pause");
 	return 0;
 }

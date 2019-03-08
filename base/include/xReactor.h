@@ -25,7 +25,7 @@ public:
 // 	{
 // 		m_reactorimp = new xReactorImplentation();
 // 	}
-	~xReactor();
+	virtual ~xReactor();
 	int start() //启动事件循环
 	{
 		HandlerEvents();
@@ -88,7 +88,10 @@ xReactor::xReactor()
 xReactor::~xReactor()
 {
 	if(m_reactorimp!=NULL)
+	{
 		delete m_reactorimp;
+		m_reactorimp=NULL;
+	}
 }
 int xReactor::RegisterHandler(xEventHandler*handler,event_t event_)
 {
@@ -152,6 +155,8 @@ void xReactorImplentation::HandlerEvents()
 		{
 			timeout = (m_eventtimer->top()->expire-time(NULL))*1000;
 		}
+		if(m_demultiplexer==NULL)
+			return;
 		m_demultiplexer->WaitEvents(&m_handlers,timeout,m_eventtimer);
 
 	}

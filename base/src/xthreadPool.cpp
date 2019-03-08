@@ -48,10 +48,11 @@ void xthreadPool::startPool(bool defaultpools )
 	for(size_t i=0;i<m_threadNum;i++)
 	{
 		//xAutoLock L(m_lockForThread);
-		threadobj thread;
+		//threadobj thread;
+		threadobj*pthread_ = new threadobj;
 		//m_ThreadList.push_back(&thread);
-		thread.beginthreadobj(this);
-		m_ThreadList.push_back(&thread);
+		pthread_->beginthreadobj(this);
+		m_ThreadList.push_back(pthread_);
 	}
 
 }

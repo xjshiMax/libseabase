@@ -20,6 +20,7 @@ typedef int handle_t;
 class xEventHandler
 {
 public:
+	virtual~xEventHandler(){}
 	// 获取需要注册的套截字或者其他文件描述符
 	virtual handle_t GetHandler()const = 0;
 	virtual void HandleRead(int listentfd){}
