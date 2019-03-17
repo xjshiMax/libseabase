@@ -1,6 +1,9 @@
 //2019/3/17 xjshi
-//线程同步变量，和xCondition 功能类似
-//实现线程间的任务同步,不需要绑定锁，
+//这里封装一下不需要引用pthread库的锁，
+//不过这个锁不能和xCondition  一起使用，单纯的锁
+// 优点，方便，单一
+
+#pragma once
 #pragma once
 #ifdef WIN32
 #include <stdio.h>
@@ -17,7 +20,16 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <semaphore.h>
+#include<pthread.h>
 #endif
+#ifdef _WIN32
+#define SEA_MUTEX_WAIT_INFINITE INFINITE
+#define SEA_mutex_t HANDLE
+#else
+#define SEA_MUTEX_WAIT_INFINITE UINT_MAX
+#define SEA_mutex_t pthread_mutex_t
+#endif
+
 namespace SEABASE
 {
 	enum {
@@ -35,28 +47,19 @@ namespace SEABASE
 		SEA_SERVICE_NOT_FOUND,
 		SEA_OUT_MAX_TRY_COUNT
 	};
-	class xSemaphore
+	class xEmutex
 	{
 	public:
-		xSemaphore(int init = 0);
-		~xSemaphore();
-		/*
-		wait 等待信号量
-		millisecond：超时时常（毫秒）
-		return 成功返回0，否则返回错误码
-		*/
-		int wait(uint32_t millisecond = INFINITE);
-		bool try_wait();
-		/*
-		signal 出发信号量
-		成功返回0，否则返回错误码
-		*/
-		int32_t signal();
+		xEmutex();
+		~xEmutex();
+		int32_t lock(uint32_t millisecond = INFINITE);
+		int32_t try_lock();
+		int32_t unlock();
 	protected:
-		//禁止使用拷贝构造和赋值运算符
-		xSemaphore(const xSemaphore&);
-		xSemaphore& operator =(const xSemaphore&);
+		xEmutex(const xEmutex&);
+		xEmutex& operator=(const xEmutex&);
 	private:
-		HANDLE _sem;
+		SEA_mutex_t _mutex;
+
 	};
 }
