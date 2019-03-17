@@ -31,6 +31,10 @@ public:
 		HandlerEvents();
 		return 0;
 	}
+	int stop()
+	{
+		m_reactorimp->StopEventLoop();
+	}
 	//注册事件，事件响应对象和事件类型，读写
 
 	int RegisterHandler(xEventHandler*handler,event_t event_);
@@ -73,11 +77,21 @@ public:
 	int RemoveHandler(xEventHandler* handler);
 	int RemoveHandlerbyfd(handle_t handlefd);
 	void HandlerEvents();
+	void StopEventLoop()
+	{
+		_bIsstop=true;
+	}
+	void StartLoop()
+	{
+		_bIsstop=false;
+		HandlerEvents();
+	}
 	int RegisterTimeTask(xheaptimer* timerevent);
 private:
 	xEventDemultiplexer *		m_demultiplexer;
 	std::map<handle_t,xEventHandler*> m_handlers;
 	xtime_heap* m_eventtimer;
+	bool _bIsstop;
 };
 
 

@@ -6,24 +6,33 @@
 	#define __stdcall
 	#include<pthread.h>
 #endif
-#include "stdio.h"
-#include "timebase.h"
 #include "xAutoLock.h"
-//pthread_mutex_t zx;
-namespace SAEBASE{
-//xMutex zx;
+
+namespace SEABASE{
+
 #pragma once
 #ifdef  WIN32
 	typedef unsigned int (__stdcall*pfunc)(void*);
 #else
 	typedef void* (__stdcall pfunc)(void*);
 #endif
+	enum threadstatus
+	{
+		INIT,
+		START,
+		JOINED,
+		STOP
+	};
+
 //基于对象的模式
 class Threadbase
 {
 public:
 	Threadbase(bool bDetach=true);
-	virtual ~Threadbase(){};
+	virtual ~Threadbase();
+	/*
+	在继承run 以后，业务执行如果使用循环，切记在析构之前退出循环，否则线程会一直运行。
+	*/
 	virtual void run()=0;		//业务接口
 	int start();			//启动线程
 	int join();				//等待线程结束
@@ -45,6 +54,7 @@ private:
 	pthread_t thr_id;
 #endif
 	bool bExit_;			//线程是否要退出标志
+	threadstatus m_state;
 	xCondition m_ConditionState;
 	xMutex m_LockState;
 };
@@ -52,11 +62,13 @@ private:
 class xThread
 {
 public:
-	xThread(bool bDetach=true):thr_id(0)
+	xThread(bool bDetach=true):thr_id(0),m_state(INIT)
 	{
-
 	}
-	virtual ~xThread(){};
+	virtual ~xThread(){
+		destory();
+		m_state=STOP;
+	};
 	int start(pfunc func,void *arg);			//启动线程
 	int join();				//等待线程结束
 	void destory();			//销毁线程所申请的资源
@@ -70,6 +82,7 @@ public:
 	pthread_t thr_id;
 #endif
 	bool bExit_;
+	threadstatus m_state;
 };
 
 

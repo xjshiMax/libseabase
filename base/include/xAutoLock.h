@@ -14,7 +14,7 @@
 	#include<sys/time.h>
 #endif
 #include "xbaseclass.h"
-namespace SAEBASE{
+namespace SEABASE{
 #define Mutex xMutex
 #define CONST_NAO_PER_SECOND 	1000000000L
 #define CONST_NAO_PER_MICRO 	1000L

@@ -31,7 +31,7 @@ int xReactor::RemoveHandlerbyfd(handle_t handlefd)
 }
 void xReactor::HandlerEvents()
 {
-	m_reactorimp->HandlerEvents();
+	m_reactorimp->StartLoop();
 }
 int xReactor::RegisterTimeTask(xheaptimer* timerevent)
 {
@@ -67,7 +67,7 @@ int xReactorImplentation::RemoveHandlerbyfd(handle_t handlefd)
 //Ìí¼Óstart
 void xReactorImplentation::HandlerEvents()
 {
-	while(1)
+	while(!_bIsstop)
 	{
 		int timeout = 0;
 		if(m_eventtimer->top() ==NULL)

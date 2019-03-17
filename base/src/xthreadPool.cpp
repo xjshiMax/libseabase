@@ -1,13 +1,13 @@
 #include "xthreadPool.h"
-using namespace SAEBASE;
+using namespace SEABASE;
 bool xsimpleThreadPool::shutdown=false;
 xMutex xsimpleThreadPool::m_threadLock;
 xCondition xsimpleThreadPool::m_threadCond;
 std::deque<xtaskbase*> xsimpleThreadPool::m_taskList;
 #ifdef WIN32
-	 unsigned int __stdcall xsimpleThreadPool::threadproxy(void* arg)
+unsigned int __stdcall xsimpleThreadPool::threadproxy(void* arg)
 #else
-	 void*  __stdcall xsimpleThreadPool::threadproxy(void* arg)
+void*  __stdcall xsimpleThreadPool::threadproxy(void* arg)
 #endif
 {
 	pthread_t tid = pthread_self();
@@ -30,16 +30,13 @@ std::deque<xtaskbase*> xsimpleThreadPool::m_taskList;
 	}
 	return 0;
 }
-xMutex  xthreadPool::m_poollock;
-void xthreadPool::initsimplePool(size_t ThreadNumber,size_t IdleTimeout,size_t Tasklistsize,size_t threadStackSize)
-{
-	stopPool();
-	m_nFreeThreadCount=0;
-	m_nIdleTimeout=IdleTimeout;
-	m_threadNum = ThreadNumber;
-	m_nThreadStackSize = threadStackSize;
-	m_tasklist.resizeQueue(Tasklistsize);
 
+
+void xthreadPool::initPool(size_t LowThreadNumber)
+{
+	if (UNINITIALIZED == m_state) {
+		m_state = INITIALIZED;}
+	m_threadNum=LowThreadNumber;
 }
 void xthreadPool::startPool(bool defaultpools )
 {
@@ -48,11 +45,45 @@ void xthreadPool::startPool(bool defaultpools )
 	for(size_t i=0;i<m_threadNum;i++)
 	{
 		//xAutoLock L(m_lockForThread);
-		//threadobj thread;
-		threadobj*pthread_ = new threadobj;
+		threadobj *thread=new threadobj;
 		//m_ThreadList.push_back(&thread);
-		pthread_->beginthreadobj(this);
-		m_ThreadList.push_back(pthread_);
+		thread->beginthreadobj(this);
+		m_ThreadList.push_back(thread);
+	}
+
+}
+bool xthreadPool::pushObj(xtaskbase*node,const struct timespec & Timeout)
+{
+	//if(m_boStartPool && isBusy())/
+	//这里有个讲究，不直接插入xtaskbase的子类对象，因为如果存对象，在插入的时候，会被强制转换成基类，丧失子类的部分
+	//如果存子类指针，在waitForTask 接口无法将指针作为传出参数，这样取不到该指针的地址。
+	//用pair<xtaskbase*，bool> 作为值类型，存入，这样取出的时候，可以将它的引用取出，这样，封装了多态问题，
+	//同时bool型变量也可用来以后拓展。
+	m_tasklist.pushTask(pair<xtaskbase*, bool>(node,false));
+	return true;
+}
+void xthreadPool::stopPool(bool defaultpools/*=true*/){
+	xAutoLock lock(m_lockForThread);
+	m_tasklist.setDeadstatus();
+	std::list<threadobj*>::iterator ite = m_ThreadList.begin();
+	while(ite!=m_ThreadList.end())
+	{
+		(*ite)->endthreadobj();
+		(*ite)->destory();
+		threadobj* pobj=*ite;
+		if(pobj)
+			delete pobj;
+		ite++;
+	}
+	m_tasklist.clearAllTask();
+}
+void xthreadPool::joinAllThread()
+{
+	std::list<threadobj*>::iterator ite = m_ThreadList.begin();
+	while(ite!=m_ThreadList.end())
+	{
+		(*ite)->join();
+		ite++;
 	}
 
 }

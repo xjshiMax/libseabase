@@ -11,7 +11,7 @@
 #include <netinet/in.h>
 #include <time.h>
 #endif
-namespace SAEBASE{
+namespace SEABASE{
 #define BUFFER_SIZE 64
 
 
