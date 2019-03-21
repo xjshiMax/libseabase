@@ -37,7 +37,7 @@ public:
 	virtual ~xEventDemultiplexer(){}
 	//分离器等待事件到来
 	virtual int WaitEvents(std::map<handle_t,xEventHandler*>*handlers,
-		int timeout=0,xtime_heap* event_timer=NULL )=0;
+		int timeout=1,xtime_heap* event_timer=NULL )=0;
 	virtual int RequestEvent(handle_t handle,event_t evt)=0;
 
 

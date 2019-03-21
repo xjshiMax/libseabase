@@ -15,7 +15,7 @@ namespace SAEBASE{
 		xSelectDemultiplexer();
 		virtual ~xSelectDemultiplexer();
 		virtual int WaitEvents(std::map<handle_t,xEventHandler*>*handlers,
-			int timeout=0,xtime_heap* event_timer=NULL );
+			int timeout=1,xtime_heap* event_timer=NULL );
 		//添加或则修改文件描述符的注册事件信息
 		virtual int RequestEvent(handle_t handle,event_t evt);
 

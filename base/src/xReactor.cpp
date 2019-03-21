@@ -2,6 +2,7 @@
 //ÖØ¹¹hpp xReacotr.cpp
 
 #include "xReactor.h"
+using namespace SAEBASE;
 using namespace std;
 xReactor::xReactor()
 {
@@ -69,10 +70,10 @@ void xReactorImplentation::HandlerEvents()
 {
 	while(1)
 	{
-		int timeout = 0;
+		int timeout = 1;
 		if(m_eventtimer->top() ==NULL)
 		{
-			timeout = 0;
+			timeout = 1;
 		}
 		else
 		{
@@ -91,3 +92,4 @@ int xReactorImplentation::RegisterTimeTask(xheaptimer* timerevent)
 	m_eventtimer->add_timer(timerevent);
 	return 0;
 }
+xReactor* ReactorInstance::m_reactor=NULL;

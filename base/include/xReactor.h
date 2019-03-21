@@ -94,5 +94,5 @@ public:
 private:
 	static xReactor* m_reactor;;
 };
-xReactor* ReactorInstance::m_reactor=NULL;
+
 }
