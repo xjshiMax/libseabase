@@ -2,7 +2,7 @@
 #include <map>
 #include <vector>
 #include "xtimeheap.h"
-namespace SAEBASE
+namespace SEABASE
 {
 
 //event_t 事件类型, 支持以下四种

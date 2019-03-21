@@ -72,6 +72,15 @@
     <ClInclude Include="..\..\base\include\xAutoLock.h">
       <Filter>头文件\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\base\include\xsema.h">
+      <Filter>头文件\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xsync_vector.h">
+      <Filter>头文件\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xEmutex.h">
+      <Filter>头文件\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -87,6 +96,24 @@
       <Filter>头文件\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\base\src\xthreadbase.cpp">
+      <Filter>头文件\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xDemultiplexerSelect.cpp">
+      <Filter>头文件\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xEventDemultiplexer.cpp">
+      <Filter>头文件\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xReactor.cpp">
+      <Filter>头文件\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xTcpServerBase.cpp">
+      <Filter>头文件\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xsema.cpp">
+      <Filter>头文件\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xEmutex.cpp">
       <Filter>头文件\src</Filter>
     </ClCompile>
   </ItemGroup>

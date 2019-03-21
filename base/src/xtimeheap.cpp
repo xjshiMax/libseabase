@@ -1,5 +1,5 @@
 #include "xtimeheap.h"
-using namespace SAEBASE;
+using namespace SEABASE;
 void xtime_heap::percolate_down(int hole)
 {
 	xheaptimer* temp = array[hole];

@@ -12,7 +12,7 @@
 #pragma once
 #include "xAutoLock.h"
 #include <deque>
-namespace SAEBASE{
+namespace SEABASE{
 template <typename Taskobj>
 class xTaskqueue
 {
@@ -149,12 +149,12 @@ bool xTaskqueue<Taskobj>::pushTask(const Taskobj& node)
 	xAutoLock L(m_LockTask);
 	if(!m_IsActive)
 		return false;
-	if(queueIsFull())
-	{
-		++m_CurWriteWaiter; 
-		m_CondTaskFree.wait(m_LockTask);
-		--m_CurWriteWaiter;
-	}
+// 	if(queueIsFull())
+// 	{
+// 		++m_CurWriteWaiter; 
+// 		m_CondTaskFree.wait(m_LockTask);
+// 		--m_CurWriteWaiter;
+// 	}
 	m_tasklist.push_back(node);
 	++m_CurTaskCount;
 	if(m_CurReadWaiter)

@@ -86,9 +86,12 @@
     <ClInclude Include="..\..\base\include\xAutoLock.h" />
     <ClInclude Include="..\..\base\include\xbaseclass.h" />
     <ClInclude Include="..\..\base\include\xDemultiplexerSelect.h" />
+    <ClInclude Include="..\..\base\include\xEmutex.h" />
     <ClInclude Include="..\..\base\include\xEventDemultiplexer.h" />
     <ClInclude Include="..\..\base\include\xReactor.h" />
     <ClInclude Include="..\..\base\include\xReactorwithThread.h" />
+    <ClInclude Include="..\..\base\include\xsema.h" />
+    <ClInclude Include="..\..\base\include\xsync_vector.h" />
     <ClInclude Include="..\..\base\include\xTaskqueue.h" />
     <ClInclude Include="..\..\base\include\xTcpServerBase.h" />
     <ClInclude Include="..\..\base\include\xthreadbase.h" />
@@ -98,6 +101,12 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\base\src\xDemultiplexerSelect.cpp" />
+    <ClCompile Include="..\..\base\src\xEmutex.cpp" />
+    <ClCompile Include="..\..\base\src\xEventDemultiplexer.cpp" />
+    <ClCompile Include="..\..\base\src\xReactor.cpp" />
+    <ClCompile Include="..\..\base\src\xsema.cpp" />
+    <ClCompile Include="..\..\base\src\xTcpServerBase.cpp" />
     <ClCompile Include="..\..\base\src\xthreadbase.cpp" />
     <ClCompile Include="..\..\base\src\xthreadPool.cpp" />
     <ClCompile Include="..\..\base\src\xtimeheap.cpp" />
