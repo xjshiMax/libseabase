@@ -29,7 +29,7 @@
 #endif
 typedef int SOCKET;
 #endif
-namespace SAEBASE
+namespace SEABASE
 {
 
 
@@ -265,85 +265,85 @@ inline static int ShutDownSocket(int socket,int howto)
 
 //与socket 相关的一些函数封装。
 
-namespace Network_function
-{
-	//获取网络端口号
-	/*
-		lpServcie :
-	*/
-	unsigned int getPortNumber(const char* lpService,const char*lptransport)throw();
-	//通过主机名称获取主机数据
-	bool getHostByName(IN const char *host,OUT struct in_addr&addr)throw(){return true;}
-	//通过网络地址获取主机信息
-	std::string getHostByAddr(IN const struct in_addr& addr)throw(){return "";}
-	//获取非阻塞IO的socket 错误号
-	int getSocktAsyncError(IN int socket){return 0;}
-	//设置socket是否阻塞。
-	int setSocketBlock(IN int socket,IN bool boBlocking){return 0;}
-
-	//设置tcp 延时
-	int setTCPDelay(IN int socket,bool boDelay=false){return 0;}
-	//
-	bool getPeerInfo(IN int socket,OUT struct sockaddr_in &addr);
-	bool getPeerInfo(IN int socket,OUT char*ip,OUT int &port);
-	bool getLocalInfo(IN int socket ,OUT struct sockaddr_in &addr );
-	bool getLocalInfo(IN int socket,OUT char*ip,OUT int &port);
-
-
-}
-//
-unsigned int Network_function::getPortNumber(const char* lpService,const char*lptransport)throw()
-{
-	return 0;
-}
-bool Network_function::getPeerInfo(IN int socket,OUT struct sockaddr_in &addr)
-{
-	if(socket!= INVALID_SOCKET)
-	{
-		socklen_t namelen=sizeof(addr);
-		if(getpeername(socket,(struct sockaddr*)&addr,(socklen_t*)&namelen)==0)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-bool Network_function::getLocalInfo(IN int socket ,OUT struct sockaddr_in &addr )
-{
-	if(socket!=INVALID_SOCKET)
-	{
-		socklen_t namelen=sizeof(addr);
-		if(getsockname(socket,(struct sockaddr*)&addr,(socklen_t*)&namelen)==0)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-bool Network_function::getPeerInfo(IN int socket,OUT char*ip,OUT int &port)
-{
-	struct sockaddr_in name;
-	if(getPeerInfo(socket,name))
-	{
-		if(sizeof(ip)<sizeof(inet_ntoa(name.sin_addr)))
-			return false;
-		strcpy(ip,inet_ntoa(name.sin_addr));
-		port=ntohs(name.sin_port);
-		return true;
-	}
-	return false;
-}
-bool Network_function::getLocalInfo(IN int socket,OUT char*ip,OUT int &port)
-{
-	struct sockaddr_in name;
-	if ( getLocalInfo(socket, name) )
-	{
-		if(sizeof(ip)<sizeof(inet_ntoa(name.sin_addr)))
-			return false;
-		strcpy(ip,inet_ntoa(name.sin_addr));
-		port = ntohs(name.sin_port);
-		return true;
-	} 
-	return false;
-}
+// namespace Network_function
+// {
+// 	//获取网络端口号
+// 	/*
+// 		lpServcie :
+// 	*/
+// 	unsigned int getPortNumber(const char* lpService,const char*lptransport)throw();
+// 	//通过主机名称获取主机数据
+// 	bool getHostByName(IN const char *host,OUT struct in_addr&addr)throw(){return true;}
+// 	//通过网络地址获取主机信息
+// 	std::string getHostByAddr(IN const struct in_addr& addr)throw(){return "";}
+// 	//获取非阻塞IO的socket 错误号
+// 	int getSocktAsyncError(IN int socket){return 0;}
+// 	//设置socket是否阻塞。
+// 	int setSocketBlock(IN int socket,IN bool boBlocking){return 0;}
+// 
+// 	//设置tcp 延时
+// 	int setTCPDelay(IN int socket,bool boDelay=false){return 0;}
+// 	//
+// 	bool getPeerInfo(IN int socket,OUT struct sockaddr_in &addr);
+// 	bool getPeerInfo(IN int socket,OUT char*ip,OUT int &port);
+// 	bool getLocalInfo(IN int socket ,OUT struct sockaddr_in &addr );
+// 	bool getLocalInfo(IN int socket,OUT char*ip,OUT int &port);
+// 
+// 
+// }
+// //
+// unsigned int Network_function::getPortNumber(const char* lpService,const char*lptransport)throw()
+// {
+// 	return 0;
+// }
+// bool Network_function::getPeerInfo(IN int socket,OUT struct sockaddr_in &addr)
+// {
+// 	if(socket!= INVALID_SOCKET)
+// 	{
+// 		socklen_t namelen=sizeof(addr);
+// 		if(getpeername(socket,(struct sockaddr*)&addr,(socklen_t*)&namelen)==0)
+// 		{
+// 			return true;
+// 		}
+// 	}
+// 	return false;
+// }
+// bool Network_function::getLocalInfo(IN int socket ,OUT struct sockaddr_in &addr )
+// {
+// 	if(socket!=INVALID_SOCKET)
+// 	{
+// 		socklen_t namelen=sizeof(addr);
+// 		if(getsockname(socket,(struct sockaddr*)&addr,(socklen_t*)&namelen)==0)
+// 		{
+// 			return true;
+// 		}
+// 	}
+// 	return false;
+// }
+// bool Network_function::getPeerInfo(IN int socket,OUT char*ip,OUT int &port)
+// {
+// 	struct sockaddr_in name;
+// 	if(getPeerInfo(socket,name))
+// 	{
+// 		if(sizeof(ip)<sizeof(inet_ntoa(name.sin_addr)))
+// 			return false;
+// 		strcpy(ip,inet_ntoa(name.sin_addr));
+// 		port=ntohs(name.sin_port);
+// 		return true;
+// 	}
+// 	return false;
+// }
+// bool Network_function::getLocalInfo(IN int socket,OUT char*ip,OUT int &port)
+// {
+// 	struct sockaddr_in name;
+// 	if ( getLocalInfo(socket, name) )
+// 	{
+// 		if(sizeof(ip)<sizeof(inet_ntoa(name.sin_addr)))
+// 			return false;
+// 		strcpy(ip,inet_ntoa(name.sin_addr));
+// 		port = ntohs(name.sin_port);
+// 		return true;
+// 	} 
+// 	return false;
+// }
 }
