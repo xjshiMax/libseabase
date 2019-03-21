@@ -2,7 +2,7 @@
 //ÖØ¹¹hpp xReacotr.cpp
 
 #include "xReactor.h"
-using namespace SAEBASE;
+using namespace SEABASE;
 using namespace std;
 xReactor::xReactor()
 {
@@ -26,7 +26,7 @@ int xReactor::RemoveHandler(xEventHandler* handler)
 {
 	return m_reactorimp->RemoveHandler(handler);
 }
-int xReactor::RemoveHandlerbyfd(handle_t handlefd)
+int xReactor::RemoveHandlerbyfd(SEABASE::handle_t handlefd)
 {
 	return m_reactorimp->RemoveHandlerbyfd(handlefd);
 }
@@ -56,7 +56,7 @@ int xReactorImplentation::RemoveHandler(xEventHandler* handler)
 	m_handlers.erase(handle);
 	return m_demultiplexer->UnrequestEvent(handle);
 }
-int xReactorImplentation::RemoveHandlerbyfd(handle_t handlefd)
+int xReactorImplentation::RemoveHandlerbyfd(SEABASE::handle_t handlefd)
 {
 	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handlefd);
 	if(it==m_handlers.end())

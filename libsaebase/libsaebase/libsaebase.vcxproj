@@ -87,7 +87,9 @@
     <ClInclude Include="..\..\base\include\xbaseclass.h" />
     <ClInclude Include="..\..\base\include\xDemultiplexerSelect.h" />
     <ClInclude Include="..\..\base\include\xEmutex.h" />
+    <ClInclude Include="..\..\base\include\xEtcpclient.h" />
     <ClInclude Include="..\..\base\include\xEventDemultiplexer.h" />
+    <ClInclude Include="..\..\base\include\xNetdata.h" />
     <ClInclude Include="..\..\base\include\xReactor.h" />
     <ClInclude Include="..\..\base\include\xReactorwithThread.h" />
     <ClInclude Include="..\..\base\include\xsema.h" />
@@ -103,6 +105,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\base\src\xDemultiplexerSelect.cpp" />
     <ClCompile Include="..\..\base\src\xEmutex.cpp" />
+    <ClCompile Include="..\..\base\src\xEtcpclient.cpp" />
     <ClCompile Include="..\..\base\src\xEventDemultiplexer.cpp" />
     <ClCompile Include="..\..\base\src\xReactor.cpp" />
     <ClCompile Include="..\..\base\src\xsema.cpp" />

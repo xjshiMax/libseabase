@@ -2,7 +2,7 @@
 //重构hpp
 
 #include "xTcpServerBase.h"
-using namespace SAEBASE;
+using namespace SEABASE;
 //在调用startTCPServer 之后或者之前，一定要调用xReactor的start()接口，开启事件响应。
 int xTcpServerBase::startTCPServer(xReactor* xreacotr,const char* ip,int port)
 {

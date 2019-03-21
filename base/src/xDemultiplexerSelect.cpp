@@ -1,7 +1,7 @@
 //xjshi 2019/3/13
 //÷ÿππhpp
 #include"xDemultiplexerSelect.h"
-using namespace SAEBASE;
+using namespace SEABASE;
 
 //select
 
@@ -15,7 +15,7 @@ xSelectDemultiplexer::~xSelectDemultiplexer()
 
 }
 
-int xSelectDemultiplexer::WaitEvents(std::map<handle_t,xEventHandler*>*handlers,
+int xSelectDemultiplexer::WaitEvents(std::map<SEABASE::handle_t,xEventHandler*>*handlers,
 	int timeout,xtime_heap* event_timer )
 {
 	//std::vector<handle_t> m_Readevents;
@@ -45,7 +45,7 @@ int xSelectDemultiplexer::WaitEvents(std::map<handle_t,xEventHandler*>*handlers,
 	}
 	return 0;
 }
-int xSelectDemultiplexer::RequestEvent(handle_t handle,event_t evt)
+int xSelectDemultiplexer::RequestEvent(SEABASE::handle_t handle,event_t evt)
 {
 	if(evt & xReadEvent)
 		FD_SET((SOCKET)handle,&m_fdReadSave);
@@ -58,7 +58,7 @@ int xSelectDemultiplexer::RequestEvent(handle_t handle,event_t evt)
 	// 		FD_SET(handle,&m_fdError);
 	return 0;
 }
-int xSelectDemultiplexer::UnrequestEvent(handle_t handle)
+int xSelectDemultiplexer::UnrequestEvent(SEABASE::handle_t handle)
 {
 	if((SOCKET)handle!=INVALID_SOCKET)
 	{

@@ -13,9 +13,48 @@
 	#include "xEventDemultiplexer.h"
 #endif
 
-namespace SAEBASE
+namespace SEABASE
 {
-class xReactorImplentation;
+#define INITSIZE 100
+	class xReactorImplentation
+	{
+	public:
+		//这里给定定时器最小堆的最大大小为 INITSIZE=100.如果超过会自动resize()
+		xReactorImplentation()
+		{
+#ifdef WIN32
+			m_demultiplexer = new xSelectDemultiplexer();
+#else
+			m_demultiplexer = new xEpollDemultiplexer();
+#endif
+			//m_demultiplexer = static_cast<xEventDemultiplexer*>(new xEpollDemultiplexer());
+			m_eventtimer = new xtime_heap(INITSIZE);
+		}
+		~xReactorImplentation()
+		{
+			delete m_demultiplexer;
+		}
+
+		int RegisterHandler(xEventHandler*handler,event_t event_);
+		int RemoveHandler(xEventHandler* handler);
+		int RemoveHandlerbyfd(handle_t handlefd);
+		void HandlerEvents();
+		void StopEventLoop()
+		{
+			_bIsstop=true;
+		}
+		void StartLoop()
+		{
+			_bIsstop=false;
+			HandlerEvents();
+		}
+		int RegisterTimeTask(xheaptimer* timerevent);
+	private:
+		xEventDemultiplexer *		m_demultiplexer;
+		std::map<handle_t,xEventHandler*> m_handlers;
+		xtime_heap* m_eventtimer;
+		bool _bIsstop;
+	};
 
 class xReactor
 {
@@ -53,46 +92,7 @@ private:
 
 };
 
-#define INITSIZE 100
-class xReactorImplentation
-{
-public:
-	//这里给定定时器最小堆的最大大小为 INITSIZE=100.如果超过会自动resize()
-	xReactorImplentation()
-	{
-#ifdef WIN32
-		m_demultiplexer = new xSelectDemultiplexer();
-#else
-		m_demultiplexer = new xEpollDemultiplexer();
-#endif
-		//m_demultiplexer = static_cast<xEventDemultiplexer*>(new xEpollDemultiplexer());
-		m_eventtimer = new xtime_heap(INITSIZE);
-	}
-	~xReactorImplentation()
-	{
-		delete m_demultiplexer;
-	}
 
-	int RegisterHandler(xEventHandler*handler,event_t event_);
-	int RemoveHandler(xEventHandler* handler);
-	int RemoveHandlerbyfd(handle_t handlefd);
-	void HandlerEvents();
-	void StopEventLoop()
-	{
-		_bIsstop=true;
-	}
-	void StartLoop()
-	{
-		_bIsstop=false;
-		HandlerEvents();
-	}
-	int RegisterTimeTask(xheaptimer* timerevent);
-private:
-	xEventDemultiplexer *		m_demultiplexer;
-	std::map<handle_t,xEventHandler*> m_handlers;
-	xtime_heap* m_eventtimer;
-	bool _bIsstop;
-};
 
 
 //reactor 单例

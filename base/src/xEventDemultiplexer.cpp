@@ -1,7 +1,7 @@
 //xjshi 2019/3/13
 //÷ÿππhpp
 #include "xEventDemultiplexer.h"
-using namespace SAEBASE;
+using namespace SEABASE;
 
 xEpollDemultiplexer::xEpollDemultiplexer()
 {

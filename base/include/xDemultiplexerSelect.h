@@ -7,7 +7,7 @@
 #pragma once
 #include "xbaseclass.h"
 #include "basesock.h"
-namespace SAEBASE{
+namespace SEABASE{
 
 	class xSelectDemultiplexer:public xEventDemultiplexer
 	{

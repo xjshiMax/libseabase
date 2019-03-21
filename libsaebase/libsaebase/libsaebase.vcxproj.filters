@@ -81,6 +81,12 @@
     <ClInclude Include="..\..\base\include\xEmutex.h">
       <Filter>头文件\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\base\include\xEtcpclient.h">
+      <Filter>头文件\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xNetdata.h">
+      <Filter>头文件\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -114,6 +120,9 @@
       <Filter>头文件\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\base\src\xEmutex.cpp">
+      <Filter>头文件\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xEtcpclient.cpp">
       <Filter>头文件\src</Filter>
     </ClCompile>
   </ItemGroup>
