@@ -41,14 +41,14 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../bindebug</OutDir>
     <LibraryPath>E:\workstation\libseabase\base\pthread\Pre-built.2\lib;$(LibraryPath)</LibraryPath>
+    <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -88,7 +88,6 @@
     <ClCompile Include="..\..\base\src\xEtcpclient.cpp" />
     <ClCompile Include="..\..\base\src\xReactor.cpp" />
     <ClCompile Include="..\..\base\src\xtimeheap.cpp" />
-    <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="tcpclient.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -84,6 +84,9 @@
     <ClInclude Include="..\..\base\include\xEtcpclient.h">
       <Filter>头文件\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\base\include\xOntimerBase.h">
+      <Filter>头文件\include</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\base\include\xNetdata.h">
       <Filter>头文件\include</Filter>
     </ClInclude>

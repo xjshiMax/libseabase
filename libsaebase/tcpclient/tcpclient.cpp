@@ -1,7 +1,7 @@
 // tcpclient.cpp : 定义控制台应用程序的入口点。
 //
 
-#include "stdafx.h"
+
 
 #include "xNetdata.h"
 #include "xEtcpclient.h"
@@ -13,10 +13,10 @@ class databack:public xReceiveback
 public:
 	void Init()
 	{
-		int iret=m_client.connectTCP("192.168.1.104",60000);
+		int iret=m_client.connectTCP("192.168.2.188",60000);
 		if(iret==-1)exit(0);
-		m_Eventfd=m_client.getSockfd();
-		m_reactor.RegisterHandler(this,xReadEvent); 
+		//m_Eventfd=m_client.getSockfd();
+		m_reactor.RegisterHandler(this,xReadEvent,&m_client); 
 		m_reactor.start();
 	}
 	virtual void Ondata(int socketfd,char*data,int len)

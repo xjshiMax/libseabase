@@ -24,6 +24,9 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\base\include\basesock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -36,6 +39,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\base\src\xthreadbase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xEtcpclient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xEmutex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xthreadPool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
