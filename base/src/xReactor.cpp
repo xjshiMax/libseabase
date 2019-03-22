@@ -23,7 +23,7 @@ int xReactor::RegisterHandler(xEventHandler*handler,event_t event_)
 }
 int xReactor::RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient)
 {
-	return m_reactorimp->RegisterHandler(handler,event_);
+	return m_reactorimp->RegisterHandler(handler,event_,psockclient);
 }
 int xReactor::RemoveHandler(xEventHandler* handler)
 {
