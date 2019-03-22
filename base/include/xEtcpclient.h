@@ -2,9 +2,17 @@
 #pragma once
 #include<string>
 #include "basesock.h"
+#define _IS_NEED_CALLBACK
+#ifdef _IS_NEED_CALLBACK
+#include "xbaseclass.h"
+#endif
 using namespace std;
 namespace SEABASE{
+#ifdef _IS_NEED_CALLBACK
+	class ExTcpClient:public sockfdHandle
+#else
 	class ExTcpClient
+#endif
 	{
 	public:
 		ExTcpClient()

@@ -52,6 +52,12 @@ private:
 	Noncopyable(const Noncopyable&){};
 	Noncopyable& operator=(const Noncopyable&){};
 };
+class sockfdHandle
+{
+public:
+	virtual ~sockfdHandle(){};
+	virtual int getSockfd()=0;
+};
 }
 
 #ifndef WIN32

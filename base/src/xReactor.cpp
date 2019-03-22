@@ -21,7 +21,10 @@ int xReactor::RegisterHandler(xEventHandler*handler,event_t event_)
 {
 	return m_reactorimp->RegisterHandler(handler,event_);
 }
-
+int xReactor::RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient)
+{
+	return m_reactorimp->RegisterHandler(handler,event_);
+}
 int xReactor::RemoveHandler(xEventHandler* handler)
 {
 	return m_reactorimp->RemoveHandler(handler);
@@ -43,6 +46,16 @@ int xReactor::RegisterTimeTask(xheaptimer* timerevent)
 int xReactorImplentation::RegisterHandler(xEventHandler*handler,event_t event_)
 {
 	handle_t handle = handler->GetHandler();
+	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
+	if(it == m_handlers.end())
+	{
+		m_handlers[handle] = handler;
+	}
+	return m_demultiplexer->RequestEvent(handle,event_);
+}
+int xReactorImplentation::RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient)
+{
+	handle_t handle = psockclient->getSockfd();
 	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
 	if(it == m_handlers.end())
 	{

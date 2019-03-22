@@ -6,12 +6,12 @@
 */
 #include "xAutoLock.h"
 #include "xthreadbase.h"
-namespace SAEBASE{
+namespace SEABASE{
 	//¶¨Ê±Æ÷£¬Ãë¼¶¡£
 	class OnTimerBase:public Threadbase
 	{
 	public:	
-		OnTimerBase(int timeout):m_TimeOut(timeout){}
+		OnTimerBase(int timeout):m_TimeOut(timeout),m_bIsstop(false){}
 		int startTimer()
 		{
 			return start();
@@ -19,12 +19,14 @@ namespace SAEBASE{
 		void stopTimer()
 		{
 			//join();
+			destory();
+			m_bIsstop=true;
 		}
 		virtual void timeout()=0;
 	private:
 		virtual void run()
 		{
-			while(1){
+			while(!m_bIsstop){
 				xAutoLock L(m_mutex);
 				struct timespec tc;
 				tc.tv_sec=m_TimeOut;
@@ -39,5 +41,6 @@ namespace SAEBASE{
 		int m_TimeOut;
 		xCondition m_SleepCondition;
 		xMutex m_mutex;
+		bool m_bIsstop;
 	};
 }

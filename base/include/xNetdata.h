@@ -20,7 +20,6 @@ namespace SEABASE{
 	class xReceiveback :public xReceivebackbase,public xEventHandler
 	{
 	public:
-		//void RegisterCallback(xEventHandler* eventhandle,event_t event_,ExTcpClient)
 		virtual handle_t GetHandler()const
 		{
 			return m_Eventfd;
