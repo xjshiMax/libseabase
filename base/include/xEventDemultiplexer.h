@@ -8,7 +8,7 @@
 #include <unistd.h>
 #endif
 #include <errno.h>
-namespace SAEBASE{
+namespace SEABASE{
 //epoll IO复用实现分离器
 ///
 /*

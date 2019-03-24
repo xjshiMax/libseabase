@@ -9,6 +9,9 @@
 #ifdef _IS_NEED_CALLBACK
 #include "xbaseclass.h"
 #endif
+#include "xNetdata.h"
+#include "xReactor.h"
+using namespace std;
 namespace SEABASE{
 	class xEtcpListen:public sockfdHandle
 	{
@@ -21,11 +24,18 @@ namespace SEABASE{
 		string m_listenIp;
 		int m_listenPort;
 	};
-	class xtcpsererbase:public 
+	class xtcpserver:public xReceiveback
 	{
+	public:
+		xtcpserver();
+		~xtcpserver();
 		int startTcpSvr(const char*ip,int port);
-		int 
+		int stopTcpSvr();
+	protected:
+		virtual void HandleRead(int listentfd,xEventDemultiplexer*demultiplex);
+
 	private:
 		xEtcpListen m_tcplistener;
+		xReactor* m_tcpreactor;
 	};
 }

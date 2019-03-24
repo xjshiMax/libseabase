@@ -16,6 +16,7 @@ typedef int handle_t;
 		xEventMask    =0xff
 };
 
+class xEventDemultiplexer;
 //事件处理基类句柄，
 class xEventHandler
 {
@@ -23,7 +24,7 @@ public:
 	virtual~xEventHandler(){}
 	// 获取需要注册的套截字或者其他文件描述符
 	virtual handle_t GetHandler()const = 0;
-	virtual void HandleRead(int listentfd){}
+	virtual void HandleRead(int listentfd,xEventDemultiplexer*demultiplex){}
 	virtual void HandlerWrite(){}
 	virtual void HandlerError(){}
 	handle_t m_Eventfd; //注册事件时，对应的fd.如果派生类同时要注册多个fd，那么需要修改m_Eventfd为对应的fd.

@@ -25,6 +25,10 @@ int xReactor::RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*
 {
 	return m_reactorimp->RegisterHandler(handler,event_,psockclient);
 }
+int xReactor::RegisterHandler(xEventHandler*handler,event_t event_,SEABASE::handle_t&sockfd)
+{
+	return m_reactorimp->RegisterHandler(handler,event_,sockfd);
+}
 int xReactor::RemoveHandler(xEventHandler* handler)
 {
 	return m_reactorimp->RemoveHandler(handler);
@@ -56,6 +60,16 @@ int xReactorImplentation::RegisterHandler(xEventHandler*handler,event_t event_)
 int xReactorImplentation::RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient)
 {
 	handle_t handle = psockclient->getSockfd();
+	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
+	if(it == m_handlers.end())
+	{
+		m_handlers[handle] = handler;
+	}
+	return m_demultiplexer->RequestEvent(handle,event_);
+}
+int xReactorImplentation::RegisterHandler(xEventHandler*handler,event_t event_,SEABASE::handle_t&sockfd)
+{
+	handle_t handle = sockfd;
 	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
 	if(it == m_handlers.end())
 	{

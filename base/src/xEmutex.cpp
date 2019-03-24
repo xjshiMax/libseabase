@@ -86,7 +86,7 @@ int32_t xEmutex::lock(uint32_t millisecond) {
 	}
 
 	if (0 != ret) {
-		int32_t e = BgccGetLastError();
+		int32_t e = GetLastError();
 		if (ETIMEDOUT == e) {
 			return SEA_TIMEOUT;
 		}

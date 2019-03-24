@@ -37,6 +37,7 @@ namespace SEABASE
 
 		int RegisterHandler(xEventHandler*handler,event_t event_);
 		int RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient);
+		int RegisterHandler(xEventHandler*handler,event_t event_,handle_t&sockfd);
 		int RemoveHandler(xEventHandler* handler);
 		int RemoveHandlerbyfd(handle_t handlefd);
 		void HandlerEvents();
@@ -79,6 +80,7 @@ public:
 
 	int RegisterHandler(xEventHandler*handler,event_t event_);
 	int RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient);
+	int RegisterHandler(xEventHandler*handler,event_t event_,SEABASE::handle_t&sockfd);
 	int RemoveHandler(xEventHandler* handler);
 	int	RemoveHandlerbyfd(handle_t handlefd);				//针对tcp等需要根据fd来注销事件的场景添加。
 	void HandlerEvents();

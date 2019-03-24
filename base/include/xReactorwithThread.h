@@ -6,7 +6,7 @@
 #pragma once
 #include "xthreadbase.h"
 #include "xReactor.h"
-namespace SAEBASE{
+namespace SEABASE{
 class xReactorwithThread:public xReactor,public Threadbase
 {
 public:

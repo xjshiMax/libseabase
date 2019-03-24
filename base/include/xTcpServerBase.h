@@ -9,7 +9,7 @@
 #include "xReactor.h"
 #include "xbaseclass.h"
 #include "basesock.h"
-namespace SAEBASE{
+namespace SEABASE{
 //一次最大读取8k字节。
 #define MAXREADSIZE		1024*8
 
@@ -19,17 +19,17 @@ public:
 	int startTCPServer(xReactor* xreacotr,const char* ip,int port);
 	int stop();
 	//如果要设置client的事件响应（读写）为单独的xEventHandler派生类实例，则在Onaccept给clientHandle赋值。
-	virtual int Onaccept(int socketfd,char*date,int len,IN xEventHandler *clientHandle=NULL);
+	virtual int Onaccept(int socketfd,char*data,int len,IN xEventHandler **clientHandle=NULL);
 	virtual int Ondata(int socketfd,char*date,int len);
 	virtual int Onclose(int socketfd);
 	int SendMsg(int peerfd,char*buf,int len);
 	bool GetLocalInfo(IN int socket,OUT char*ip,OUT int &port)
 	{
-		return Network_function::getLocalInfo(socket,ip,port);
+		return getLocalInfo(socket,ip,port);
 	}
 	bool GetPeerInfo(IN int socket,OUT char*ip,OUT int &port)
 	{
-		return Network_function::getPeerInfo(socket,ip,port);
+		return getPeerInfo(socket,ip,port);
 	}
 	int getListenHandle()const
 	{
@@ -37,7 +37,7 @@ public:
 	}
 public:
 	virtual handle_t GetHandler()const;
-	virtual void HandleRead(int listentfd);
+	virtual void HandleRead(int listentfd,xEventDemultiplexer*demultiplex);
 	virtual void HandlerWrite(){}
 	virtual void HandlerError(){}
 private:

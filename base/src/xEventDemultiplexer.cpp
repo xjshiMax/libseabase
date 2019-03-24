@@ -2,7 +2,7 @@
 //÷ÿππhpp
 #include "xEventDemultiplexer.h"
 using namespace SEABASE;
-
+#ifndef WIN32
 xEpollDemultiplexer::xEpollDemultiplexer()
 {
 	m_epoll_fd=::epoll_create(FD_SETSIZE);
@@ -34,7 +34,7 @@ int xEpollDemultiplexer::WaitEvents(std::map<handle_t,xEventHandler*>*handlers, 
 			{
 				if(ep_events[idx].events & EPOLLIN)
 				{
-					(*handlers)[handle]->HandleRead(handle);
+					(*handlers)[handle]->HandleRead(handle,this);
 				}
 				if(ep_events[idx].events & EPOLLOUT)
 				{
@@ -88,4 +88,4 @@ int xEpollDemultiplexer::UnrequestEvent(handle_t handle)
 	--m_fd_num;
 }
 
-
+#endif

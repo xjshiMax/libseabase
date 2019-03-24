@@ -34,7 +34,7 @@ int xSelectDemultiplexer::WaitEvents(std::map<SEABASE::handle_t,xEventHandler*>*
 			int fd=m_fdReadSave.fd_array[j];
 			if(FD_ISSET(fd,&fdread))
 			{
-				(*handlers)[fd]->HandleRead(fd);
+				(*handlers)[fd]->HandleRead(fd,this);
 			}
 		}
 

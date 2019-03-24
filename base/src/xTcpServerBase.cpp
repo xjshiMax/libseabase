@@ -23,7 +23,7 @@ int xTcpServerBase::startTCPServer(xReactor* xreacotr,const char* ip,int port)
 		m_reactor->RegisterHandler(this,xReadEvent); // 注册写事件。
 	return 0;
 }
-int xTcpServerBase::Onaccept(int socketfd,char*date,int len,IN xEventHandler *clientHandle)
+int xTcpServerBase::Onaccept(int socketfd,char*data,int len,IN xEventHandler **clientHandle)
 {
 	return 0;
 }
@@ -39,13 +39,13 @@ int xTcpServerBase::SendMsg(int peerfd,char*buf,int len)
 {
 	return SendSocket(peerfd,buf,len);
 }
-handle_t xTcpServerBase::GetHandler()const
+SEABASE::handle_t xTcpServerBase::GetHandler()const
 {
 	if(m_Eventfd!=INVALID_SOCKET)
 		return m_Eventfd;
 	return -1;
 }
-void xTcpServerBase::HandleRead(int listentfd)
+void xTcpServerBase::HandleRead(int listentfd,xEventDemultiplexer*demultiplex)
 {
 	if(listentfd==m_listenfd) // 监听套接字的io事件
 	{
@@ -55,16 +55,16 @@ void xTcpServerBase::HandleRead(int listentfd)
 		if((SOCKET)acceptfd==INVALID_SOCKET)
 			return ;
 		xEventHandler * pclientEvent=NULL;
-		this->Onaccept(acceptfd,NULL,0,pclientEvent);
-		m_Eventfd=acceptfd;
+		this->Onaccept(acceptfd,NULL,0,&pclientEvent);
+		//m_Eventfd=acceptfd;
 		if(m_reactor)  //这里注册accept的fd,
 		{
 			if(pclientEvent==NULL)
-				m_reactor->RegisterHandler(this,xReadEvent);
+				m_reactor->RegisterHandler(this,xReadEvent,acceptfd);
 			else
 			{
 				pclientEvent->m_Eventfd=m_acceptfd;
-				m_reactor->RegisterHandler(pclientEvent,xReadEvent);
+				m_reactor->RegisterHandler(pclientEvent,xReadEvent,acceptfd);
 			}
 			//m_reactor->RegisterHandler(pclientEvent,xReadEvent);
 		}

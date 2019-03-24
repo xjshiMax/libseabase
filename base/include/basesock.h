@@ -292,58 +292,62 @@ inline static int ShutDownSocket(int socket,int howto)
 // 
 // }
 // //
-// unsigned int Network_function::getPortNumber(const char* lpService,const char*lptransport)throw()
-// {
-// 	return 0;
-// }
-// bool Network_function::getPeerInfo(IN int socket,OUT struct sockaddr_in &addr)
-// {
-// 	if(socket!= INVALID_SOCKET)
-// 	{
-// 		socklen_t namelen=sizeof(addr);
-// 		if(getpeername(socket,(struct sockaddr*)&addr,(socklen_t*)&namelen)==0)
-// 		{
-// 			return true;
-// 		}
-// 	}
-// 	return false;
-// }
-// bool Network_function::getLocalInfo(IN int socket ,OUT struct sockaddr_in &addr )
-// {
-// 	if(socket!=INVALID_SOCKET)
-// 	{
-// 		socklen_t namelen=sizeof(addr);
-// 		if(getsockname(socket,(struct sockaddr*)&addr,(socklen_t*)&namelen)==0)
-// 		{
-// 			return true;
-// 		}
-// 	}
-// 	return false;
-// }
-// bool Network_function::getPeerInfo(IN int socket,OUT char*ip,OUT int &port)
-// {
-// 	struct sockaddr_in name;
-// 	if(getPeerInfo(socket,name))
-// 	{
-// 		if(sizeof(ip)<sizeof(inet_ntoa(name.sin_addr)))
-// 			return false;
-// 		strcpy(ip,inet_ntoa(name.sin_addr));
-// 		port=ntohs(name.sin_port);
-// 		return true;
-// 	}
-// 	return false;
-// }
-// bool Network_function::getLocalInfo(IN int socket,OUT char*ip,OUT int &port)
-// {
-// 	struct sockaddr_in name;
-// 	if ( getLocalInfo(socket, name) )
-// 	{
-// 		if(sizeof(ip)<sizeof(inet_ntoa(name.sin_addr)))
-// 			return false;
-// 		strcpy(ip,inet_ntoa(name.sin_addr));
-// 		port = ntohs(name.sin_port);
-// 		return true;
-// 	} 
-// 	return false;
-// }
+
+
+
+inline static unsigned int getPortNumber(const char* lpService,const char*lptransport)throw()
+{
+	return 0;
+}
+inline static bool getPeerInfo(IN int socket,OUT struct sockaddr_in &addr)
+{
+	if(socket!= INVALID_SOCKET)
+	{
+		socklen_t namelen=sizeof(addr);
+		if(getpeername(socket,(struct sockaddr*)&addr,(socklen_t*)&namelen)==0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+inline static bool getLocalInfo(IN int socket ,OUT struct sockaddr_in &addr )
+{
+	if(socket!=INVALID_SOCKET)
+	{
+		socklen_t namelen=sizeof(addr);
+		if(getsockname(socket,(struct sockaddr*)&addr,(socklen_t*)&namelen)==0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+inline static bool getPeerInfo(IN int socket,OUT char*ip,OUT int &port)
+{
+	struct sockaddr_in name;
+	if(getPeerInfo(socket,name))
+	{
+		if(sizeof(ip)<sizeof(inet_ntoa(name.sin_addr)))
+			return false;
+		strcpy(ip,inet_ntoa(name.sin_addr));
+		port=ntohs(name.sin_port);
+		return true;
+	}
+	return false;
+}
+inline static bool getLocalInfo(IN int socket,OUT char*ip,OUT int &port)
+{
+	struct sockaddr_in name;
+	if ( getLocalInfo(socket, name) )
+	{
+		if(sizeof(ip)<sizeof(inet_ntoa(name.sin_addr)))
+			return false;
+		strcpy(ip,inet_ntoa(name.sin_addr));
+		port = ntohs(name.sin_port);
+		return true;
+	} 
+	return false;
+}
+
 }
