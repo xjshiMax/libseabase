@@ -11,6 +11,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ThreadpoolTest", "Threadpoo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcpclient", "tcpclient\tcpclient.vcxproj", "{5DCF9F45-5B77-4ADD-B295-C9D35F1F6233}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcpserver", "tcpserver\tcpserver.vcxproj", "{90A614DD-E6E6-4269-B452-BBEFF1356E92}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libseabase", "libseabase\libseabase.vcxproj", "{83F73635-452B-49FC-8859-34E26479567A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +41,14 @@ Global
 		{5DCF9F45-5B77-4ADD-B295-C9D35F1F6233}.Debug|Win32.Build.0 = Debug|Win32
 		{5DCF9F45-5B77-4ADD-B295-C9D35F1F6233}.Release|Win32.ActiveCfg = Release|Win32
 		{5DCF9F45-5B77-4ADD-B295-C9D35F1F6233}.Release|Win32.Build.0 = Release|Win32
+		{90A614DD-E6E6-4269-B452-BBEFF1356E92}.Debug|Win32.ActiveCfg = Debug|Win32
+		{90A614DD-E6E6-4269-B452-BBEFF1356E92}.Debug|Win32.Build.0 = Debug|Win32
+		{90A614DD-E6E6-4269-B452-BBEFF1356E92}.Release|Win32.ActiveCfg = Release|Win32
+		{90A614DD-E6E6-4269-B452-BBEFF1356E92}.Release|Win32.Build.0 = Release|Win32
+		{83F73635-452B-49FC-8859-34E26479567A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{83F73635-452B-49FC-8859-34E26479567A}.Debug|Win32.Build.0 = Debug|Win32
+		{83F73635-452B-49FC-8859-34E26479567A}.Release|Win32.ActiveCfg = Release|Win32
+		{83F73635-452B-49FC-8859-34E26479567A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

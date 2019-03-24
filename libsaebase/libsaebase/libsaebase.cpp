@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "../../base/include/xthreadPool.h"
 using namespace std;
-using namespace SAEBASE;
+using namespace SEABASE;
 class mytask:public xtaskbase
 {
 public:

@@ -84,10 +84,13 @@
     <ClInclude Include="..\..\base\include\xEtcpclient.h">
       <Filter>头文件\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\base\include\xOntimerBase.h">
+    <ClInclude Include="..\..\base\include\xNetdata.h">
       <Filter>头文件\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\base\include\xNetdata.h">
+    <ClInclude Include="..\..\base\include\xEtcpserver.h">
+      <Filter>头文件\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xOntimerBase.h">
       <Filter>头文件\include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -126,6 +129,9 @@
       <Filter>头文件\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\base\src\xEtcpclient.cpp">
+      <Filter>头文件\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xEtcpserver.cpp">
       <Filter>头文件\src</Filter>
     </ClCompile>
   </ItemGroup>
