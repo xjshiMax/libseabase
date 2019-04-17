@@ -16,7 +16,7 @@ namespace SEABASE{
 		virtual ~xSelectDemultiplexer();
 		virtual int WaitEvents(int timeout=1,xtime_heap* event_timer=NULL );
 		//添加或则修改文件描述符的注册事件信息
-		virtual int RequestEvent(handle_t handle,event_t evt,xEventHandler*peventhandler);
+		virtual int RequestEvent(xEvent_t&e);
 
 
 		virtual int UnrequestEvent(handle_t handle);

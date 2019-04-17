@@ -27,21 +27,27 @@ int xEpollDemultiplexer::WaitEvents( int timeout/* =0 */,xtime_heap* event_timer
 
 			if(ep_events[idx].events & EPOLLERR || (ep_events[idx].events & EPOLLHUP))
 			{
-				m_handlers[handle]->HandlerError();
+				if(m_handlers[fd].m_errorptr)
+				{
+					m_handlers[fd].m_errorptr(fd,this,(void*)m_handlers[fd].m_errorarg);
+				}
 			}
 			else
 			{
 				if(ep_events[idx].events & EPOLLIN)
 				{
 					//(*handlers)[handle]->HandleRead(handle,this);
-					if(m_handlers[handle]->m_readptr)
+					if(m_handlers[fd].m_readptr)
 					{
-						m_handlers[handle]->m_readptr(handle,this,(void*)m_handlers[handle]);
+						m_handlers[fd].m_readptr(fd,this,(void*)m_handlers[fd].m_readarg);
 					}
 				}
 				if(ep_events[idx].events & EPOLLOUT)
 				{
-					m_handlers[handle]->HandlerWrite();
+					if(m_handlers[fd].m_writeptr)
+					{
+						m_handlers[fd].m_writeptr(fd,this,(void*)m_handlers[fd].m_writearg);
+					}
 				}
 			}
 		}
@@ -54,7 +60,7 @@ int xEpollDemultiplexer::WaitEvents( int timeout/* =0 */,xtime_heap* event_timer
 	return num;
 }
 
-int xEpollDemultiplexer::RequestEvent(handle_t handle,event_t evt)
+int xEpollDemultiplexer::RequestEvent(xEvent_t&e)
 {
 	epoll_event ep_event;
 	ep_event.data.fd = handle;
@@ -78,10 +84,11 @@ int xEpollDemultiplexer::RequestEvent(handle_t handle,event_t evt)
 			++m_fd_num;
 		}
 	}
-	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
+	int handle = e.m_Eventfd;
+	std::map<handle_t,xEvent_t>::iterator it = m_handlers.find(handle);
 	if(it==m_handlers.end())
 	{
-		m_handlers[handle]=peventhandler;
+		m_handlers[handle]=e;
 	}
 	return 0;
 }
@@ -94,8 +101,8 @@ int xEpollDemultiplexer::UnrequestEvent(handle_t handle)
 		return -errno;
 	}
 	--m_fd_num;
-	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
-	if(it!=m_handlers.end())
+	std::map<handle_t,xEvent_t>::iterator it = m_handlers.find(handle);
+	if(it==m_handlers.end())
 	{
 		m_handlers.erase(handle);
 	}

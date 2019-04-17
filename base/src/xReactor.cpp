@@ -17,22 +17,15 @@ xReactor::~xReactor()
 		m_reactorimp=NULL;
 	}
 }
-int xReactor::RegisterHandler(xEventHandler*handler,event_t event_)
+int xReactor::RegisterHandler(xReceivebackbase*handler,SEABASE::handle_t&sockfd)
 {
-	return m_reactorimp->RegisterHandler(handler,event_);
+	return m_reactorimp->RegisterHandler(handler,sockfd);
 }
-int xReactor::RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient)
-{
-	return m_reactorimp->RegisterHandler(handler,event_,psockclient);
-}
-int xReactor::RegisterHandler(xEventHandler*handler,event_t event_,SEABASE::handle_t&sockfd)
-{
-	return m_reactorimp->RegisterHandler(handler,event_,sockfd);
-}
-int xReactor::RemoveHandler(xEventHandler* handler)
-{
-	return m_reactorimp->RemoveHandler(handler);
-}
+
+// int xReactor::RemoveHandler(xEventHandler* handler)
+// {
+// 	return m_reactorimp->RemoveHandler(handler);
+// }
 int xReactor::RemoveHandlerbyfd(SEABASE::handle_t handlefd)
 {
 	return m_reactorimp->RemoveHandlerbyfd(handlefd);
@@ -47,48 +40,16 @@ int xReactor::RegisterTimeTask(xheaptimer* timerevent)
 	return 0;
 }
 
-int xReactorImplentation::RegisterHandler(xEventHandler*handler,event_t event_)
+
+int xReactorImplentation::RegisterHandler(xReceivebackbase*handler,SEABASE::handle_t&sockfd)
 {
-	handle_t handle = handler->GetHandler();
-// 	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
-// 	if(it == m_handlers.end())
-// 	{
-// 		m_handlers[handle] = handler;
-// 	}
-	return m_demultiplexer->RequestEvent(handle,event_,handler);
+	xEvent_t e;
+	Eventcallback::InitEvent(e,sockfd,handler,Eventcallback::AcceptCallback);
+	return m_demultiplexer->RequestEvent(e);
 }
-int xReactorImplentation::RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient)
-{
-	handle_t handle = psockclient->getSockfd();
-// 	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
-// 	if(it == m_handlers.end())
-// 	{
-// 		m_handlers[handle] = handler;
-// 	}
-	return m_demultiplexer->RequestEvent(handle,event_,handler);
-}
-int xReactorImplentation::RegisterHandler(xEventHandler*handler,event_t event_,SEABASE::handle_t&sockfd)
-{
-	handle_t handle = sockfd;
-// 	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
-// 	if(it == m_handlers.end())
-// 	{
-// 		m_handlers[handle] = handler;
-// 	}
-	return m_demultiplexer->RequestEvent(handle,event_,handler);
-}
-int xReactorImplentation::RemoveHandler(xEventHandler* handler)
-{
-	handle_t handle =handler->GetHandler();
-	m_handlers.erase(handle);
-	return m_demultiplexer->UnrequestEvent(handle);
-}
+
 int xReactorImplentation::RemoveHandlerbyfd(SEABASE::handle_t handlefd)
 {
-// 	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handlefd);
-// 	if(it==m_handlers.end())
-// 		return -1;
-// 	m_handlers.erase(handlefd);
 	return m_demultiplexer->UnrequestEvent(handlefd);
 }
 //这里添加事件循环，

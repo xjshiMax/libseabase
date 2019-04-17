@@ -1,6 +1,16 @@
 #include "xNetdata.h"
 using namespace SEABASE;
 
+void Eventcallback::InitEvent(xEvent_t& e, SOCKET sock, void *arg,pcallbackptr func)
+{
+	e.m_Eventfd=sock;
+	e.m_eventmask=xReadEvent|xErrorEvent;
+	e.m_readptr = func;
+	e.m_writearg=arg;
+	//e.m_writeptr=
+	e.m_errorptr=ErrCallback;
+	e.m_errorarg=arg;
+}
 void Eventcallback::AcceptCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg)
 {
 	struct sockaddr_in clientaddr;
@@ -8,27 +18,26 @@ void Eventcallback::AcceptCallback(int sockfd,xEventDemultiplexer*Demultiplexer,
 	int acceptfd=AccpetSocket(sockfd,(SOCKADDR*)&clientaddr,&socklen);
 	if((SOCKET)acceptfd==INVALID_SOCKET)
 		return ;
-	xEventHandler * pclientEvent=NULL;
-	xtcpserver*pserver = (xEventHandler*)arg;
+	xReceivebackbase * pclientEvent=NULL;
+	xItcpserver*pserver = (xItcpserver*)arg;
 	if(!pserver)	return ;
-	pserver->Onaccept(acceptfd,NULL,0,&pclientEvent);
+	pserver->Onaccept(acceptfd,NULL,0,(xReceivebackbase**)&pclientEvent);
 	//m_Eventfd=acceptfd;
 	if(pclientEvent)  //ÕâÀï×¢²áacceptµÄfd,
 	{
 		if(pclientEvent==NULL)
 		{
 			//pserver->m_readptr=DataCallback;
-
-			Demultiplexer->RequestEvent(acceptfd,xReadEvent,pclientEvent);
+			xEvent_t e;
+			InitEvent(e,acceptfd,arg,DataCallback);
+			Demultiplexer->RequestEvent(e);
 		}
 		else
 		{
-			pclientEvent->m_Eventfd=acceptfd;
-			pclientEvent->m_readptr=DataCallback;
-			//reactor->RegisterHandler(pclientEvent,xReadEvent,acceptfd);
-			Demultiplexer->RequestEvent(acceptfd,xReadEvent,pclientEvent);
+			xEvent_t e;
+			InitEvent(e,acceptfd,pclientEvent,DataCallback);
+			Demultiplexer->RequestEvent(e);
 		}
-		//m_reactor->RegisterHandler(pclientEvent,xReadEvent);
 	}
 	return ;
 }
@@ -53,4 +62,8 @@ void Eventcallback::DataCallback(int sockfd,xEventDemultiplexer*Demultiplexer,vo
 		pserver->Ondata(sockfd,buf,iret);
 	else
 		return ;
+}
+void Eventcallback::ErrCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg)
+{
+
 }

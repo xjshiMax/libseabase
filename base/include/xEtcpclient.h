@@ -9,7 +9,7 @@
 using namespace std;
 namespace SEABASE{
 #ifdef _IS_NEED_CALLBACK
-	class ExTcpClient:public sockfdHandle
+	class ExTcpClient:public xReceivebackbase
 #else
 	class ExTcpClient
 #endif

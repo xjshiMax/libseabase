@@ -14,7 +14,7 @@
 using namespace std;
 namespace SEABASE{
 
-	class xEtcpListen:public sockfdHandle
+	class xEtcpListen
 	{
 	public:
 		int startlisten(const char*ip,int port);
@@ -25,15 +25,16 @@ namespace SEABASE{
 		string m_listenIp;
 		int m_listenPort;
 	};
-	class xtcpserver:public xReceiveback
+	class xtcpserver:public xItcpserver
 	{
 	public:
 		xtcpserver();
 		~xtcpserver();
 		int startTcpSvr(const char*ip,int port);
 		int stopTcpSvr();
-	protected:
-		virtual void HandleRead(int listentfd,xEventDemultiplexer*demultiplex);
+		virtual int Onaccept(int socketfd,char*data,int len,IN xReceivebackbase**clientHandle=NULL){};
+		virtual void Ondata(int socketfd,char*date,int len){return ;};
+		virtual void Onclose(int socketfd){return ;};
 
 	private:
 		xEtcpListen m_tcplistener;

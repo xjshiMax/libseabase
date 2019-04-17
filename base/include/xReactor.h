@@ -7,6 +7,7 @@
 #include <map>
 #include "xbaseclass.h"
 #include "xtimeheap.h"
+#include "xNetdata.h"
 #ifdef WIN32
 	#include "xDemultiplexerSelect.h"
 #else
@@ -34,11 +35,8 @@ namespace SEABASE
 		{
 			delete m_demultiplexer;
 		}
-
-		int RegisterHandler(xEventHandler*handler,event_t event_);
-		int RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient);
-		int RegisterHandler(xEventHandler*handler,event_t event_,handle_t&sockfd);
-		int RemoveHandler(xEventHandler* handler);
+		int RegisterHandler(xReceivebackbase*handler,handle_t&sockfd);
+		//int RemoveHandler(xEventHandler* handler);
 		int RemoveHandlerbyfd(handle_t handlefd);
 		void HandlerEvents();
 		void StopEventLoop()
@@ -78,10 +76,8 @@ public:
 	}
 	//注册事件，事件响应对象和事件类型，读写
 
-	int RegisterHandler(xEventHandler*handler,event_t event_);
-	int RegisterHandler(xEventHandler*handler,event_t event_,sockfdHandle*psockclient);
-	int RegisterHandler(xEventHandler*handler,event_t event_,SEABASE::handle_t&sockfd);
-	int RemoveHandler(xEventHandler* handler);
+	int RegisterHandler(xReceivebackbase*handler,handle_t&sockfd);
+	//int RemoveHandler(xEventHandler* handler);
 	int	RemoveHandlerbyfd(handle_t handlefd);				//针对tcp等需要根据fd来注销事件的场景添加。
 	void HandlerEvents();
 
