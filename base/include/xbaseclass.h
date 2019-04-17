@@ -17,19 +17,22 @@ typedef int handle_t;
 };
 
 class xEventDemultiplexer;
+
+typedef void (*preadptr)(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg);
 //事件处理基类句柄，
 class xEventHandler
 {
 public:
+	xEventHandler():preadptr(NULL){}
 	virtual~xEventHandler(){}
 	// 获取需要注册的套截字或者其他文件描述符
 	virtual handle_t GetHandler()const = 0;
 	virtual void HandleRead(int listentfd,xEventDemultiplexer*demultiplex){}
 	virtual void HandlerWrite(){}
 	virtual void HandlerError(){}
+	preadptr m_readptr;
 	handle_t m_Eventfd; //注册事件时，对应的fd.如果派生类同时要注册多个fd，那么需要修改m_Eventfd为对应的fd.
 };
-
 // 分发器实现（IO复用分离时间的机制）
 
 class xEventDemultiplexer
@@ -37,12 +40,12 @@ class xEventDemultiplexer
 public:
 	virtual ~xEventDemultiplexer(){}
 	//分离器等待事件到来
-	virtual int WaitEvents(std::map<handle_t,xEventHandler*>*handlers,
-		int timeout=1,xtime_heap* event_timer=NULL )=0;
-	virtual int RequestEvent(handle_t handle,event_t evt)=0;
+	virtual int WaitEvents(int timeout=1,xtime_heap* event_timer=NULL )=0;
+	virtual int RequestEvent(handle_t handle,event_t evt,xEventHandler*peventhandler)=0;
 
 
 	virtual int UnrequestEvent(handle_t handle)=0;
+	std::map<handle_t,xEventHandler*> m_handlers;
 };
 class Noncopyable
 {

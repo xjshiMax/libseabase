@@ -15,8 +15,7 @@ xEpollDemultiplexer::~xEpollDemultiplexer()
 }
 
 //超时为0,则不阻塞，立即返回，timeout单位 ms.
-int xEpollDemultiplexer::WaitEvents(std::map<handle_t,xEventHandler*>*handlers, int timeout/* =0 */,
-	xtime_heap* event_timer/* =NULL */ )
+int xEpollDemultiplexer::WaitEvents( int timeout/* =0 */,xtime_heap* event_timer/* =NULL */ )
 {
 	std::vector<epoll_event> ep_events(m_fd_num);
 	int num = epoll_wait(m_epoll_fd,&ep_events[0],ep_events.size(),timeout);
@@ -28,17 +27,21 @@ int xEpollDemultiplexer::WaitEvents(std::map<handle_t,xEventHandler*>*handlers, 
 
 			if(ep_events[idx].events & EPOLLERR || (ep_events[idx].events & EPOLLHUP))
 			{
-				(*handlers)[handle]->HandlerError();
+				m_handlers[handle]->HandlerError();
 			}
 			else
 			{
 				if(ep_events[idx].events & EPOLLIN)
 				{
-					(*handlers)[handle]->HandleRead(handle,this);
+					//(*handlers)[handle]->HandleRead(handle,this);
+					if(m_handlers[handle]->m_readptr)
+					{
+						m_handlers[handle]->m_readptr(handle,this,(void*)m_handlers[handle]);
+					}
 				}
 				if(ep_events[idx].events & EPOLLOUT)
 				{
-					(*handlers)[handle]->HandlerWrite();
+					m_handlers[handle]->HandlerWrite();
 				}
 			}
 		}
@@ -75,6 +78,11 @@ int xEpollDemultiplexer::RequestEvent(handle_t handle,event_t evt)
 			++m_fd_num;
 		}
 	}
+	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
+	if(it==m_handlers.end())
+	{
+		m_handlers[handle]=peventhandler;
+	}
 	return 0;
 }
 
@@ -86,6 +94,11 @@ int xEpollDemultiplexer::UnrequestEvent(handle_t handle)
 		return -errno;
 	}
 	--m_fd_num;
+	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
+	if(it!=m_handlers.end())
+	{
+		m_handlers.erase(handle);
+	}
 }
 
 #endif

@@ -1,6 +1,8 @@
 //2019/3/17 xjshi
 //线程同步变量，和xCondition 功能类似
 //实现线程间的任务同步,不需要绑定锁，
+#ifndef _XSEMA_H
+#define _XSEMA_H
 #pragma once
 #ifdef WIN32
 #include <stdio.h>
@@ -8,7 +10,7 @@
 #include <string.h>
 #include <limits.h>
 #include <sys/types.h>
-#include <sys/stat.h>>
+#include <sys/stat.h>
 #include <stdint.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -20,23 +22,38 @@
 #endif
 namespace SEABASE
 {
-	enum {
-		SEA_SUCCESS,
-		SEA_NULL_POINTER = -10000,
-		SEA_CONF_ERROR,
-		SEA_NOMEM,
-		SEA_INVALID_PARAM,
-		SEA_SYSERROR,
-		SEA_TIMEOUT,
-		SEA_SERVER_ALREADY_INIT,
-		SEA_SERVER_INIT_FAILED,
-		SEA_SERVER_NEED_INIT,
-		SEA_SERVER_CREATE_LISTENFD_FAILED,
-		SEA_SERVICE_NOT_FOUND,
-		SEA_OUT_MAX_TRY_COUNT
-	};
+// 	enum xstatus_e{
+// 		SEA_SUCCESS,
+// 		SEA_NULL_POINTER = -10000,
+// 		SEA_CONF_ERROR,
+// 		SEA_NOMEM,
+// 		SEA_INVALID_PARAM,
+// 		SEA_SYSERROR,
+// 		SEA_TIMEOUT,
+// 		SEA_SERVER_ALREADY_INIT,
+// 		SEA_SERVER_INIT_FAILED,
+// 		SEA_SERVER_NEED_INIT,
+// 		SEA_SERVER_CREATE_LISTENFD_FAILED,
+// 		SEA_SERVICE_NOT_FOUND,
+// 		SEA_OUT_MAX_TRY_COUNT
+// 	};
 	class xSemaphore
 	{
+		enum xstatus_e{
+			SEA_SUCCESS,
+			SEA_NULL_POINTER = -10000,
+			SEA_CONF_ERROR,
+			SEA_NOMEM,
+			SEA_INVALID_PARAM,
+			SEA_SYSERROR,
+			SEA_TIMEOUT,
+			SEA_SERVER_ALREADY_INIT,
+			SEA_SERVER_INIT_FAILED,
+			SEA_SERVER_NEED_INIT,
+			SEA_SERVER_CREATE_LISTENFD_FAILED,
+			SEA_SERVICE_NOT_FOUND,
+			SEA_OUT_MAX_TRY_COUNT
+		};
 	public:
 		xSemaphore(int init = 0);
 		~xSemaphore();
@@ -60,3 +77,5 @@ namespace SEABASE
 		HANDLE _sem;
 	};
 }
+
+#endif

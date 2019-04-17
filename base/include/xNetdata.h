@@ -18,6 +18,30 @@ namespace SEABASE{
 		*/
 		//virtual void Onopen(int socketfd,char*date,int len,IN xEventHandler *clientHandle){};
 		virtual void Ondata(int socketfd,char*data,int len)=0;
+		virtual void Onclose(int socketfd)=0;
+	};
+	class xtcpserver:public xReceivebackbase,public xEventHandler
+	{
+		virtual int Onaccept(int socketfd,char*data,int len,IN xEventHandler**clientHandle=NULL)=0;
+		virtual int Ondata(int socketfd,char*date,int len){return 0;};
+		virtual int Onclose(int socketfd){return 0;};
+	};
+	class Eventcallback
+	{
+	public:
+		static void AcceptCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg);
+		static void DataCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg);
+	};
+	class xReceivebackbase
+	{
+	public:
+		xReceivebackbase(){};
+		virtual ~xReceivebackbase(){}
+		/*
+		这里onopen 个一个xEventHandler 为输入参数，后续可以将其他的类传入，注册接收到的fd
+		*/
+		//virtual void Onopen(int socketfd,char*date,int len,IN xEventHandler *clientHandle){};
+		virtual void Ondata(int socketfd,char*data,int len)=0;
 		virtual void Onclose(int socketfd){};
 	};
 	class xReceiveback :public xReceivebackbase,public xEventHandler

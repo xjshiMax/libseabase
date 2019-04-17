@@ -15,8 +15,7 @@ xSelectDemultiplexer::~xSelectDemultiplexer()
 
 }
 
-int xSelectDemultiplexer::WaitEvents(std::map<SEABASE::handle_t,xEventHandler*>*handlers,
-	int timeout,xtime_heap* event_timer )
+int xSelectDemultiplexer::WaitEvents(int timeout,xtime_heap* event_timer )
 {
 	//std::vector<handle_t> m_Readevents;
 	fd_set fdread;
@@ -34,7 +33,11 @@ int xSelectDemultiplexer::WaitEvents(std::map<SEABASE::handle_t,xEventHandler*>*
 			int fd=m_fdReadSave.fd_array[j];
 			if(FD_ISSET(fd,&fdread))
 			{
-				(*handlers)[fd]->HandleRead(fd,this);
+				//m_handlers[fd]->HandleRead(fd,this);
+				if((m_handlers[fd])->m_readptr)
+				{
+					m_handlers[fd]->m_readptr(fd,this,(void*)m_handlers[fd]);
+				}
 			}
 		}
 
@@ -45,8 +48,13 @@ int xSelectDemultiplexer::WaitEvents(std::map<SEABASE::handle_t,xEventHandler*>*
 	}
 	return 0;
 }
-int xSelectDemultiplexer::RequestEvent(SEABASE::handle_t handle,event_t evt)
+int xSelectDemultiplexer::RequestEvent(SEABASE::handle_t handle,event_t evt,xEventHandler*peventhandler)
 {
+	std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
+	if(it==m_handlers.end())
+	{
+		m_handlers[handle]=peventhandler;
+	}
 	if(evt & xReadEvent)
 		FD_SET((SOCKET)handle,&m_fdReadSave);
 	if((int)handle > m_maxfdID)
@@ -64,6 +72,11 @@ int xSelectDemultiplexer::UnrequestEvent(SEABASE::handle_t handle)
 	{
 		FD_CLR((SOCKET)handle,&m_fdReadSave);
 		--m_fd_num;
+		std::map<handle_t,xEventHandler*>::iterator it = m_handlers.find(handle);
+		if(it!=m_handlers.end())
+		{
+			m_handlers.erase(handle);
+		}
 	}
 	return 0;
 }

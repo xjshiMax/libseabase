@@ -1,8 +1,9 @@
 //2019/3/17 by xjshi
 //线程安全vector 
+#include "xEmutex.h"
 #include "xsema.h"
-#include "xAutoLock.h"
-#include <vector>
+//#include "xAutoLock.h"
+#include <queue>
 
 namespace SEABASE
 {
@@ -11,7 +12,7 @@ namespace SEABASE
 	{
 	private:
 		xSemaphore* m_psem;
-		xMutex m_mutex;
+		xEmutex m_mutex;
 		std::queue<ElemType> m_queue;
 	public:
 		xSyncVector()
@@ -21,11 +22,12 @@ namespace SEABASE
 		~xSyncVector()
 		{
 			if(m_psem!=NULL)
-				delete m_pse;m
+				delete m_psem;
 		}
 		int32_t put(ElemType elem)
 		{
-			xAutoLock L(m_mutex);
+			//xAutoLock L(m_mutex);
+			xGuard<xEmutex> autolock(&m_mutex);
 			try{
 			m_queue.push(elem);
 			}catch(std::bad_alloc &){
@@ -39,7 +41,7 @@ namespace SEABASE
 			int32_t ret = m_psem->wait(millisecond);
 			if(0 == ret)
 			{
-				xAutoLock L(m_mutex);
+				xGuard<xEmutex> autolock(&m_mutex);
 				elem = m_queue.front();
 				m_queue.pop();
 			}
@@ -55,13 +57,13 @@ namespace SEABASE
 		}
 		void clear()
 		{
-			xAutoLock L(m_mutex);
+			xGuard<xEmutex> autolock(&m_mutex);
 			while(m_queue.size()){
 				m_queue.pop();
 			}
 		}
 	protected:
-		xSyncVector(const SyncVector&);
-		xSyncVector& operator=(const SyncVector&);
-	}
+		xSyncVector(const xSyncVector&);
+		xSyncVector& operator=(const xSyncVector&);
+	};
 }

@@ -53,7 +53,7 @@ namespace SEABASE
 		int RegisterTimeTask(xheaptimer* timerevent);
 	private:
 		xEventDemultiplexer *		m_demultiplexer;
-		std::map<handle_t,xEventHandler*> m_handlers;
+		//std::map<handle_t,xEventHandler*> m_handlers;
 		xtime_heap* m_eventtimer;
 		bool _bIsstop;
 	};
@@ -94,9 +94,6 @@ private:
 	xReactorImplentation* m_reactorimp;
 
 };
-
-
-
 
 //reactor µ¥Àý
 class ReactorInstance

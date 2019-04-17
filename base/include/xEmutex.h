@@ -11,10 +11,10 @@
 #include <string.h>
 #include <limits.h>
 #include <sys/types.h>
-#include <sys/stat.h>>
+#include <sys/stat.h>
 #include <stdint.h>
-#include <winsock2.h>
 #include <ws2tcpip.h>
+//#include <winsock2.h>
 #include <time.h>
 #else
 #include <unistd.h>
@@ -32,7 +32,7 @@
 
 namespace SEABASE
 {
-	enum {
+	enum xstatus{
 		SEA_SUCCESS,
 		SEA_NULL_POINTER = -10000,
 		SEA_CONF_ERROR,
@@ -61,5 +61,69 @@ namespace SEABASE
 	private:
 		SEA_mutex_t _mutex;
 
+	};
+
+	 template <typename LockType>
+        class xGuard {
+        public:
+            /**
+             * @brief Guard 构造函数，对Mutex加锁
+             *
+             * @param lock 待加锁指针
+             */
+            xGuard(LockType* lock) : _locked(false), _lock(lock) {
+                if (NULL != _lock) {
+                    if (0 == _lock->lock()) {
+                        _locked = true;
+                    }
+                }
+            }
+
+            /**
+             * @brief is_locked 检测加锁是否成功
+             *
+             * @return 加锁成功返回true；否则返回false
+             */
+            bool is_locked() const {
+                return _locked;
+            }
+
+            /**
+             * @brief ~Guard 析构函数，对Mutex解锁
+             */
+            ~xGuard() {
+                if (NULL != _lock) {
+                    if (0 == _lock->unlock()) {
+                        _locked = false;
+                    }
+                }
+            }
+        private:
+            volatile bool _locked;
+            LockType* _lock;
+        };
+	class xEAutoLock
+	{
+	public:
+		 xEAutoLock(xEmutex* lock) : _locked(false), _lock(lock) {
+                if (NULL != _lock) {
+                    if (0 == _lock->lock()) {
+                        _locked = true;
+                    }
+                }
+            }
+            bool is_locked() const {
+                return _locked;
+            }
+            ~xEAutoLock() {
+                if (NULL != _lock) {
+                    if (0 == _lock->unlock()) {
+                        _locked = false;
+                    }
+                }
+            }
+        private:
+            volatile bool _locked;
+            xEmutex* _lock;
 	};
 }
