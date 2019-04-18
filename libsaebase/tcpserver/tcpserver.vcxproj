@@ -41,6 +41,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\..\bindebug</OutDir>
     <LibraryPath>..\..\base\pthread\Pre-built.2\lib;$(LibraryPath)</LibraryPath>
+    <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
