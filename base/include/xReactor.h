@@ -16,6 +16,15 @@
 
 namespace SEABASE
 {
+	class datatype
+	{
+	public:
+		enum databackType
+		{
+			TcpAcceptCallback,
+			TcpDataCallback
+		};
+	};
 #define INITSIZE 100
 	class xReactorImplentation
 	{
@@ -35,8 +44,7 @@ namespace SEABASE
 		{
 			delete m_demultiplexer;
 		}
-		int RegisterHandler(xReceivebackbase*handler,handle_t&sockfd);
-		//int RemoveHandler(xEventHandler* handler);
+		int RegisterHandler(xReceivebackbase*handler,handle_t&sockfd,int type=datatype::TcpAcceptCallback); //给tcp client 注册
 		int RemoveHandlerbyfd(handle_t handlefd);
 		void HandlerEvents();
 		void StopEventLoop()
@@ -76,7 +84,7 @@ public:
 	}
 	//注册事件，事件响应对象和事件类型，读写
 
-	int RegisterHandler(xReceivebackbase*handler,handle_t&sockfd);
+	int RegisterHandler(xReceivebackbase*handler,handle_t&sockfd,int type=datatype::TcpAcceptCallback);
 	//int RemoveHandler(xEventHandler* handler);
 	int	RemoveHandlerbyfd(handle_t handlefd);				//针对tcp等需要根据fd来注销事件的场景添加。
 	void HandlerEvents();

@@ -32,7 +32,7 @@ namespace SEABASE{
 		~xtcpserver();
 		int startTcpSvr(const char*ip,int port);
 		int stopTcpSvr();
-		virtual int Onaccept(int socketfd,char*data,int len,IN xReceivebackbase**clientHandle=NULL){};
+		virtual int Onaccept(int socketfd,char*data,int len,IN xReceivebackbase**clientHandle=NULL){return 0;};
 		virtual void Ondata(int socketfd,char*date,int len){return ;};
 		virtual void Onclose(int socketfd){return ;};
 

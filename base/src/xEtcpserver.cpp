@@ -14,7 +14,7 @@ int xEtcpListen::startlisten(const char*ip,int port)
 	BindSocket(m_listenFd,(SOCKADDR*)&addrsvr,sizeof(addrsvr));
 	if(ListenSocket(m_listenFd,10)==INVALID_SOCKET)
 		return -1;
-	return 0;
+	return m_listenFd;
 }
 xtcpserver::xtcpserver():m_tcpreactor(NULL)
 {
@@ -35,46 +35,14 @@ int xEtcpListen::getSockfd()
 
 int xtcpserver::startTcpSvr(const char*ip,int port)
 {
-	m_tcplistener.startlisten(ip,port);
+
+	int listenfd = m_tcplistener.startlisten(ip,port);
 	//m_tcpreactor = reactor;
 	//m_tcpreactor->Register
-	return 0;
+	return listenfd;
 }
 int xtcpserver::stopTcpSvr()
 {
+	m_tcplistener.stoplisten();
 	return 0;
-}
-
-void xtcpserver::HandleRead(int listentfd,xEventDemultiplexer*demultiplex)
-{
-	if(listentfd==m_tcplistener.getSockfd())
-	{
-
-		struct sockaddr_in clientaddr;
-		socklen_t socklen=sizeof(struct sockaddr_in);
-		int acceptfd=AccpetSocket(m_tcplistener.getSockfd(),(SOCKADDR*)&clientaddr,&socklen);
-		if((SOCKET)acceptfd==INVALID_SOCKET)
-			return ;
-		xEventHandler * pclientEvent=NULL;
-		//this->Onopen(acceptfd,NULL,0,pclientEvent);
-
-	}
-	else
-	{
-		char buf[MAXREADSIZE]={0};
-		int len=MAXREADSIZE;
-		int iret = ReadSocket(listentfd,buf,len);
-		len=sizeof(buf);
-		if(iret==0)
-		{
-			CloseSocket(listentfd);
-			ShutDownSocket(listentfd,0);
-			this->Onclose(listentfd);
-			//CloseSocket(listentfd);
-		}
-		else if(iret>=0)
-			this->Ondata(listentfd,buf,iret);
-		else
-			return ;
-	}
 }

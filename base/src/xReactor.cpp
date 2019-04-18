@@ -17,9 +17,9 @@ xReactor::~xReactor()
 		m_reactorimp=NULL;
 	}
 }
-int xReactor::RegisterHandler(xReceivebackbase*handler,SEABASE::handle_t&sockfd)
+int xReactor::RegisterHandler(xReceivebackbase*handler,SEABASE::handle_t&sockfd,int type)
 {
-	return m_reactorimp->RegisterHandler(handler,sockfd);
+	return m_reactorimp->RegisterHandler(handler,sockfd,type);
 }
 
 // int xReactor::RemoveHandler(xEventHandler* handler)
@@ -41,10 +41,13 @@ int xReactor::RegisterTimeTask(xheaptimer* timerevent)
 }
 
 
-int xReactorImplentation::RegisterHandler(xReceivebackbase*handler,SEABASE::handle_t&sockfd)
+int xReactorImplentation::RegisterHandler(xReceivebackbase*handler,SEABASE::handle_t&sockfd,int type)
 {
 	xEvent_t e;
-	Eventcallback::InitEvent(e,sockfd,handler,Eventcallback::AcceptCallback);
+	if(type==datatype::TcpAcceptCallback)
+		Eventcallback::InitEvent(e,sockfd,handler,Eventcallback::AcceptCallback);
+	else if(type==datatype::TcpDataCallback)
+		Eventcallback::InitEvent(e,sockfd,handler,Eventcallback::DataCallback);
 	return m_demultiplexer->RequestEvent(e);
 }
 
@@ -73,3 +76,11 @@ void xReactorImplentation::HandlerEvents()
 
 	}
 }
+int xReactorImplentation::RegisterTimeTask(xheaptimer* timerevent)
+{
+	if(timerevent == NULL)
+		return -1;
+	m_eventtimer->add_timer(timerevent);
+	return 0;
+}
+xReactor* ReactorInstance::m_reactor=NULL;
