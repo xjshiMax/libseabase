@@ -8,9 +8,10 @@ using namespace SEABASE;
 #endif
 {
 	Threadbase* pbase=static_cast<Threadbase*> (arg);
-	pbase->m_LockState.lock();
-	pbase->m_ConditionState.signal();
-	pbase->m_LockState.unlock();
+// 	pbase->m_LockState.lock();
+// 	pbase->m_ConditionState.signal();
+// 	pbase->m_LockState.unlock();
+	pbase->m_sema.signal();
 	pbase->run();
 	return 0;
 }
@@ -22,7 +23,7 @@ Threadbase::Threadbase(bool bDetach):m_state(INIT),bExit_(false)
 Threadbase::~Threadbase()
 {
 	//join();
-	m_ConditionState.signal();
+	m_sema.signal();
 	destory();
 	m_state=STOP;
 	printf("~Threadbase\n");
@@ -32,7 +33,7 @@ int Threadbase::start()
 {
 	if(m_state!=INIT)
 		return -1;
-	xAutoLock L(m_LockState);
+	//xAutoLock L(m_LockState);
 #ifdef WIN32
 	unsigned int nval=_beginthreadex(0,0,thread_proxy,this,0,&thr_id);
 	thr_id=nval;
@@ -41,7 +42,7 @@ int Threadbase::start()
 	int arg=0;
 	pthread_create(&thr_id,NULL,thread_proxy,this);
 #endif
-	m_ConditionState.wait(m_LockState);
+	m_sema.wait();
 	
 	m_state=START;
 	return 0;

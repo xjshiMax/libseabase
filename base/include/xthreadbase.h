@@ -1,4 +1,5 @@
 #pragma once
+//#include <Winsock2.h>
 #ifdef WIN32
 	#include <process.h>
 	#include <Windows.h>
@@ -6,8 +7,8 @@
 	#define __stdcall
 	#include<pthread.h>
 #endif
-#include "xAutoLock.h"
-
+#include "xsema.h"
+//#include "xAutoLock.h"
 namespace SEABASE{
 
 #pragma once
@@ -55,8 +56,7 @@ private:
 #endif
 	bool bExit_;			//线程是否要退出标志
 	threadstatus m_state;
-	xCondition m_ConditionState;
-	xMutex m_LockState;
+	xSemaphore m_sema;
 };
 //面向对象的模式
 class xThread
