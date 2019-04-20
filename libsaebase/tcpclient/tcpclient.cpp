@@ -6,17 +6,18 @@
 #include "xNetdata.h"
 #include "xEtcpclient.h"
 #include "xReactor.h"
+#pragma comment(lib,"../../output/lib/windows/libseabase.lib")
 using namespace SEABASE;
 
-class databack:public xReceiveback
+class databack:public xReceivebackbase
 {
 public:
 	void Init()
 	{
-		int iret=m_client.connectTCP("192.168.2.188",60000);
+		int iret=m_client.connectTCP("192.168.1.103",60000);
 		if(iret==-1)exit(0);
-		//m_Eventfd=m_client.getSockfd();
-		m_reactor.RegisterHandler(this,xReadEvent,&m_client); 
+		int Eventfd=m_client.getSockfd();
+		m_reactor.RegisterHandler(this,Eventfd,datatype::TcpDataCallback); 
 		m_reactor.start();
 	}
 	virtual void Ondata(int socketfd,char*data,int len)

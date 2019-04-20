@@ -327,7 +327,7 @@ namespace SEABASE {
 
     std::string xStringUtil::rand_string() {
         struct timeval tv;
-		TimeUtil::gettimeofday(&tv, NULL);
+		xTimeUtil::gettimeofday(&tv, NULL);
         uint32_t seed = tv.tv_usec;
 
         std::stringstream ss;

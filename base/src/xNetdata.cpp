@@ -6,6 +6,7 @@ void Eventcallback::InitEvent(xEvent_t& e, SOCKET sock, void *arg,pcallbackptr f
 	e.m_Eventfd=sock;
 	e.m_eventmask=xReadEvent|xErrorEvent;
 	e.m_readptr = func;
+	e.m_readarg = arg;
 	e.m_writearg=arg;
 	//e.m_writeptr=
 	e.m_errorptr=ErrCallback;
@@ -25,20 +26,18 @@ void Eventcallback::AcceptCallback(int sockfd,xEventDemultiplexer*Demultiplexer,
 	//m_Eventfd=acceptfd;
 	if(pclientEvent)  //ÕâÀï×¢²áacceptµÄfd,
 	{
-		if(pclientEvent==NULL)
-		{
-			//pserver->m_readptr=DataCallback;
-			xEvent_t e;
-			InitEvent(e,acceptfd,arg,DataCallback);
-			Demultiplexer->RequestEvent(e);
-		}
-		else
-		{
-			xEvent_t e;
-			InitEvent(e,acceptfd,pclientEvent,DataCallback);
-			Demultiplexer->RequestEvent(e);
-		}
+		xEvent_t e;
+		InitEvent(e,acceptfd,pclientEvent,DataCallback);
+		Demultiplexer->RequestEvent(e);
 	}
+	else if(pclientEvent==NULL)
+	{
+		//pserver->m_readptr=DataCallback;
+		xEvent_t e;
+		InitEvent(e,acceptfd,arg,DataCallback);
+		Demultiplexer->RequestEvent(e);
+	}
+	
 	return ;
 }
 void Eventcallback::DataCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg)

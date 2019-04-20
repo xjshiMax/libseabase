@@ -1,11 +1,11 @@
 #include "xTimeuil.h"
 #include <iostream>
 #include "xStringuil.h"
-using namespace SEABASE;
-
+namespace SEABASE
+{
 
     static struct tm* localtime_r(const time_t* timep, struct tm* result = NULL) {
-#ifdef _WIN32
+#ifdef WIN32
         (void)result;
         return localtime(timep);
 #else
@@ -140,7 +140,7 @@ using namespace SEABASE;
         struct tm *pt = NULL;
         char buffer[24] = {0};
 
-        pt = bgcc::localtime_r(&time, &t);
+        pt = SEABASE::localtime_r(&time, &t);
         if(NULL != pt)
         {
             t = *pt;
@@ -151,7 +151,7 @@ using namespace SEABASE;
     }
 
 #ifndef _WIN32
-    int32_t TimeUtil::get_abs_timespec(struct timespec* ts, int32_t millisecond) {
+    int32_t xTimeUtil::get_abs_timespec(struct timespec* ts, int32_t millisecond) {
         struct timeval tv;
         int32_t ret;
 
@@ -186,7 +186,7 @@ using namespace SEABASE;
         struct tm t;
         struct tm *pt = NULL;
 
-        pt = bgcc::localtime_r(&time, &t);
+        pt = SEABASE::localtime_r(&time, &t);
         if(NULL == pt)
         {
             return -1;
@@ -201,7 +201,7 @@ using namespace SEABASE;
         struct tm result;
         struct tm *presult = NULL;
         char buffer[20] = {0};
-        presult = bgcc::localtime_r(&t, &result);
+        presult = SEABASE::localtime_r(&t, &result);
         if(NULL != presult)
         {
             result = *presult;
@@ -216,7 +216,7 @@ using namespace SEABASE;
         struct tm result;
         struct tm *presult = NULL;
         char buffer[20] = {0};
-        presult = bgcc::localtime_r(&t, &result);
+        presult = SEABASE::localtime_r(&t, &result);
         if(NULL != presult)
         {
             result = *presult;
@@ -231,7 +231,7 @@ using namespace SEABASE;
         time_t t = time(NULL);
         struct tm result;
         struct tm *presult = NULL;
-        presult = bgcc::localtime_r(&t, &result);
+        presult = SEABASE::localtime_r(&t, &result);
         if(NULL == presult)
         {
             return -1;
@@ -244,7 +244,7 @@ using namespace SEABASE;
     {
         struct tm result;
         struct tm *presult = NULL;
-        presult = bgcc::localtime_r(&time, &result);
+        presult = SEABASE::localtime_r(&time, &result);
         if(NULL == presult)
         {
             return -1;
@@ -262,7 +262,7 @@ using namespace SEABASE;
         return format_time(&tv, fmt);
     }
     
-    std::string TimeUtil::format_time(time_t time, const char * fmt)
+    std::string xTimeUtil::format_time(time_t time, const char * fmt)
     {
         struct ::timeval tv = {0, 0};
         tv.tv_sec = static_cast <long>(time);
@@ -280,7 +280,7 @@ using namespace SEABASE;
         if(NULL == fmt)
         {
             //格式化当前时间
-            presult = bgcc::localtime_r(&t, &result);
+            presult = SEABASE::localtime_r(&t, &result);
             if(NULL != presult)
             {
                 result = *presult;
@@ -312,7 +312,7 @@ using namespace SEABASE;
                 str_tmp.assign(tmp);
                 str_fmt = xStringUtil::replace_string(str_fmt, "[U]", str_tmp);
             }
-            presult = bgcc::localtime_r(&t, &result);
+            presult = SEABASE::localtime_r(&t, &result);
             if(NULL != presult)
             {
                 result = *presult;

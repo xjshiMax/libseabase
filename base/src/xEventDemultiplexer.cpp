@@ -23,13 +23,13 @@ int xEpollDemultiplexer::WaitEvents( int timeout/* =0 */,xtime_heap* event_timer
 	{
 		for(int idx = 0;idx<num;++idx)
 		{
-			handle_t handle = ep_events[idx].data.fd;
+			int handle = ep_events[idx].data.fd;
 
 			if(ep_events[idx].events & EPOLLERR || (ep_events[idx].events & EPOLLHUP))
 			{
-				if(m_handlers[fd].m_errorptr)
+				if(m_handlers[handle].m_errorptr)
 				{
-					m_handlers[fd].m_errorptr(fd,this,(void*)m_handlers[fd].m_errorarg);
+					m_handlers[handle].m_errorptr(handle,this,(void*)m_handlers[handle].m_errorarg);
 				}
 			}
 			else
@@ -37,16 +37,16 @@ int xEpollDemultiplexer::WaitEvents( int timeout/* =0 */,xtime_heap* event_timer
 				if(ep_events[idx].events & EPOLLIN)
 				{
 					//(*handlers)[handle]->HandleRead(handle,this);
-					if(m_handlers[fd].m_readptr)
+					if(m_handlers[handle].m_readptr)
 					{
-						m_handlers[fd].m_readptr(fd,this,(void*)m_handlers[fd].m_readarg);
+						m_handlers[handle].m_readptr(handle,this,(void*)m_handlers[handle].m_readarg);
 					}
 				}
 				if(ep_events[idx].events & EPOLLOUT)
 				{
-					if(m_handlers[fd].m_writeptr)
+					if(m_handlers[handle].m_writeptr)
 					{
-						m_handlers[fd].m_writeptr(fd,this,(void*)m_handlers[fd].m_writearg);
+						m_handlers[handle].m_writeptr(handle,this,(void*)m_handlers[handle].m_writearg);
 					}
 				}
 			}
@@ -63,21 +63,21 @@ int xEpollDemultiplexer::WaitEvents( int timeout/* =0 */,xtime_heap* event_timer
 int xEpollDemultiplexer::RequestEvent(xEvent_t&e)
 {
 	epoll_event ep_event;
-	ep_event.data.fd = handle;
+	ep_event.data.fd = e.m_Eventfd;
 	ep_event.events = 0;
-	if(evt &xReadEvent ) //	 读事件
+	if(e.m_eventmask &xReadEvent ) //	 读事件
 	{
 		ep_event.events |= EPOLLIN;
 	}
-	if(evt&xWriteEvent) // 写事件
+	if(e.m_eventmask&xWriteEvent) // 写事件
 	{
 		ep_event.events |=EPOLLOUT;
 	}
-	if(epoll_ctl(m_epoll_fd,EPOLL_CTL_MOD,handle,&ep_event)!=0)
+	if(epoll_ctl(m_epoll_fd,EPOLL_CTL_MOD,e.m_Eventfd,&ep_event)!=0)
 	{
 		if(errno ==ENOENT)
 		{
-			if(epoll_ctl(m_epoll_fd,EPOLL_CTL_ADD,handle,&ep_event)!=0)
+			if(epoll_ctl(m_epoll_fd,EPOLL_CTL_ADD,e.m_Eventfd,&ep_event)!=0)
 			{
 				return -errno;
 			}

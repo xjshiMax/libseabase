@@ -4,7 +4,7 @@
 using namespace SEABASE;
 
 //select
-
+#ifdef WIN32
 xSelectDemultiplexer::xSelectDemultiplexer()
 {
 	m_fd_num=0;
@@ -73,10 +73,12 @@ int xSelectDemultiplexer::UnrequestEvent(SEABASE::handle_t handle)
 		FD_CLR((SOCKET)handle,&m_fdReadSave);
 		--m_fd_num;
 		std::map<handle_t,xEvent_t>::iterator it = m_handlers.find(handle);
-		if(it==m_handlers.end())
+		if(it!=m_handlers.end())
 		{
 			m_handlers.erase(handle);
 		}
 	}
 	return 0;
 }
+
+#endif

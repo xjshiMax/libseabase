@@ -1,7 +1,55 @@
 //2019/4/18
 //xjshi 时间和日期计算
-#include < inttypes.h>
+/*#include < inttypes.h>*/
+#pragma once
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <string>
+#ifdef WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <time.h>
+#include <stdint.h>
+#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+#define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
+#else
+#define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
+#endif
+#else
+#include <unistd.h>
+#include <stdint.h>
+#include <signal.h>
+#include <errno.h>
+#include <sys/time.h>
+#include <linux/unistd.h>
+
+#include <fcntl.h>
+#include <sys/epoll.h>
+#include <sys/socket.h>
+#include <sys/poll.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
+#include <pthread.h>
+#include <semaphore.h>
+
+#endif
+#ifndef WIN32
+#define SOCKET int32_t
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
+#define MAXNFD 10000
+#else
+#define snprintf _snprintf
+#endif
+using namespace std;
 namespace SEABASE{
 
 #ifdef _WIN32
@@ -149,7 +197,7 @@ namespace SEABASE{
         **/
 		static int32_t gettimeofday(struct ::timeval *tv, struct timezone *tz);
 
-#ifdef _WIN32
+#ifdef WIN32
     private:
 		/*__declspec(thread)*/ static FILETIME _ft;             /**< 标准时间    */
         /*__declspec(thread)*/ static LARGE_INTEGER _pform;     /**< 标准时间戳  */

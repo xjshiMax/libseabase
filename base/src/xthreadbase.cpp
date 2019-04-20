@@ -26,7 +26,7 @@ Threadbase::~Threadbase()
 	m_sema.signal();
 	destory();
 	m_state=STOP;
-	printf("~Threadbase\n");
+	//printf("~Threadbase\n");
 }
 
 int Threadbase::start()

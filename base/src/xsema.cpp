@@ -71,7 +71,7 @@ int32_t xSemaphore::wait(uint32_t millisecond /* = INFINITE */)
 	int32_t ret = 0;
 	if(millisecond == INFINITE)
 	{
-		while((ret=sem_wait(&sem))==-1&&EINTR==errno)
+		while((ret=sem_wait(&_sem))==-1&&EINTR==errno);
 	}
 	else{
 		struct timespec ts = {0,0};
@@ -80,7 +80,7 @@ int32_t xSemaphore::wait(uint32_t millisecond /* = INFINITE */)
 	}
 	if(0!=ret)
 	{
-		if(GetLastError() == ETIMEDOUT)
+		if(errno == ETIMEDOUT)
 			return SEA_TIMEOUT;
 		else
 			return SEA_SYSERROR;

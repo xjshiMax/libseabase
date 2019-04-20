@@ -6,7 +6,7 @@
 
 #include "xEmutex.h"
 
-namespace bgcc {
+namespace SEABASE {
 
     class xStringUtil {
     public:
@@ -262,7 +262,7 @@ namespace bgcc {
                 T tmp;
                 bool ret = false;
 
-                ss << StringUtil::trim(str);
+                ss << xStringUtil::trim(str);
                 if (ss.str().length() > 0) {
                     try {
                         ss >> tmp;

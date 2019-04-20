@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 {
 	xReactor reactor;
 	tcpser mytcp;
-	int listenfd = mytcp.startTcpSvr("192.168.1.101",8000);
+	int listenfd = mytcp.startTcpSvr("0.0.0.0",8000);
 
 	reactor.RegisterHandler(&mytcp,listenfd);
 	reactor.start();

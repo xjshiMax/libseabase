@@ -44,11 +44,15 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\base\include;..\..\base\pthread\Pre-built.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath)  $(ProjectDir)..\..\output\lib\windows
+copy $(ProjectDir)..\..\base\include\  $(ProjectDir)..\..\output\include\</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -70,34 +74,42 @@
     <ClInclude Include="..\..\base\include\xAutoLock.h" />
     <ClInclude Include="..\..\base\include\xbaseclass.h" />
     <ClInclude Include="..\..\base\include\xDemultiplexerSelect.h" />
+    <ClInclude Include="..\..\base\include\xEMsgqueue.h" />
     <ClInclude Include="..\..\base\include\xEmutex.h" />
     <ClInclude Include="..\..\base\include\xEtcpclient.h" />
     <ClInclude Include="..\..\base\include\xEtcpserver.h" />
+    <ClInclude Include="..\..\base\include\xEthreadpool.h" />
     <ClInclude Include="..\..\base\include\xEventDemultiplexer.h" />
     <ClInclude Include="..\..\base\include\xNetdata.h" />
     <ClInclude Include="..\..\base\include\xOntimerBase.h" />
     <ClInclude Include="..\..\base\include\xReactor.h" />
     <ClInclude Include="..\..\base\include\xReactorwithThread.h" />
     <ClInclude Include="..\..\base\include\xsema.h" />
+    <ClInclude Include="..\..\base\include\xsmartPtr.h" />
+    <ClInclude Include="..\..\base\include\xStringuil.h" />
+    <ClInclude Include="..\..\base\include\xsync_queue.h" />
     <ClInclude Include="..\..\base\include\xsync_vector.h" />
     <ClInclude Include="..\..\base\include\xTaskqueue.h" />
-    <ClInclude Include="..\..\base\include\xTcpServerBase.h" />
     <ClInclude Include="..\..\base\include\xthreadbase.h" />
     <ClInclude Include="..\..\base\include\xthreadPool.h" />
     <ClInclude Include="..\..\base\include\xtimeheap.h" />
+    <ClInclude Include="..\..\base\include\xTimeuil.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\base\src\xDemultiplexerSelect.cpp" />
     <ClCompile Include="..\..\base\src\xEmutex.cpp" />
     <ClCompile Include="..\..\base\src\xEtcpclient.cpp" />
     <ClCompile Include="..\..\base\src\xEtcpserver.cpp" />
+    <ClCompile Include="..\..\base\src\xEthreadpool.cpp" />
     <ClCompile Include="..\..\base\src\xEventDemultiplexer.cpp" />
+    <ClCompile Include="..\..\base\src\xNetdata.cpp" />
     <ClCompile Include="..\..\base\src\xReactor.cpp" />
     <ClCompile Include="..\..\base\src\xsema.cpp" />
-    <ClCompile Include="..\..\base\src\xTcpServerBase.cpp" />
+    <ClCompile Include="..\..\base\src\xStringuil.cpp" />
     <ClCompile Include="..\..\base\src\xthreadbase.cpp" />
     <ClCompile Include="..\..\base\src\xthreadPool.cpp" />
     <ClCompile Include="..\..\base\src\xtimeheap.cpp" />
+    <ClCompile Include="..\..\base\src\xTimeuil.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

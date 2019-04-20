@@ -15,6 +15,10 @@ threadobj在类外边定义带线程的对象，但是没有自己的任务池。
 #include "xbaseclass.h"
 #include "xthreadbase.h"
 #include "xTaskqueue.h"
+#ifndef WIN32
+#define OUT 
+#define IN 
+#endif
 using namespace std;
 namespace SEABASE{
 	//任务对象的即基类。每个job都是xtaskbase派生类的对象
@@ -174,7 +178,7 @@ namespace SEABASE{
 					}
 				}while(!m_bisStop);
 			}
-			bool waitforjob(xTaskqueue<pair<xtaskbase*,bool>>&tasklist,const struct timespec &timeout,OUT pair<xtaskbase*,bool> &tasknode)
+			bool waitforjob(xTaskqueue<pair<xtaskbase*,bool> >&tasklist,const struct timespec &timeout,OUT pair<xtaskbase*,bool> &tasknode)
 			{
 				//pair<xtaskbase*,bool> temptask;
 				if(!tasklist.waitForTask(tasknode,timeout))
@@ -195,7 +199,7 @@ namespace SEABASE{
 		size_t			m_threadNum;
 		int				m_state;
 		xMutex			m_lockForThread;
-		xTaskqueue<pair<xtaskbase*, bool>>		m_tasklist;  //这里放入容器，必须得是指针才会有多态
+		xTaskqueue<pair<xtaskbase*, bool> >		m_tasklist;  //这里放入容器，必须得是指针才会有多态
 		std::list<threadobj*> m_ThreadList;		//这里在startPool的时候不能定义局部变量，否则线程还没执行完，对象被释放了会导致一些奇怪的错误。
 	};
 	

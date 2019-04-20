@@ -19,8 +19,14 @@
 #else
 #include <unistd.h>
 #include <stdint.h>
+#include <signal.h>
+#include <errno.h>
+#include <sys/time.h>
+#include <linux/unistd.h>
+
+
+#include <pthread.h>
 #include <semaphore.h>
-#include<pthread.h>
 #endif
 #ifdef _WIN32
 #define SEA_MUTEX_WAIT_INFINITE INFINITE
@@ -28,6 +34,7 @@
 #else
 #define SEA_MUTEX_WAIT_INFINITE UINT_MAX
 #define SEA_mutex_t pthread_mutex_t
+#define INFINITE            0xFFFFFFFF 
 #endif
 
 namespace SEABASE

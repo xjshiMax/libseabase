@@ -66,9 +66,6 @@
     <ClInclude Include="..\..\base\include\xTaskqueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\base\include\xTcpServerBase.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\base\include\xthreadbase.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -76,6 +73,24 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\base\include\xtimeheap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xStringuil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xTimeuil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xEMsgqueue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xEthreadpool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xsmartPtr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xsync_queue.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,9 +116,6 @@
     <ClCompile Include="..\..\base\src\xsema.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\base\src\xTcpServerBase.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\base\src\xthreadbase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -111,6 +123,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\base\src\xtimeheap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xStringuil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xTimeuil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xEthreadpool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xNetdata.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

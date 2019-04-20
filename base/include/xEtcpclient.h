@@ -2,7 +2,7 @@
 #pragma once
 #include<string>
 #include "basesock.h"
-#define _IS_NEED_CALLBACK
+//#define _IS_NEED_CALLBACK
 #ifdef _IS_NEED_CALLBACK
 #include "xbaseclass.h"
 #endif
@@ -15,8 +15,10 @@ namespace SEABASE{
 #endif
 	{
 	public:
-		ExTcpClient()
+		ExTcpClient():m_sockfd(-1),m_clientport(0),m_serverport(0)
 		{
+			memset(m_serverip,0,32);
+			memset(m_clientip,0,32);
 			InitSocket();
 			m_sockfd=CreateSocket(SOCK_STREAM);
 		}

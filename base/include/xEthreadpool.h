@@ -114,8 +114,8 @@ namespace SEABASE
 		xThreadGroup(const xThreadGroup&);
 		xThreadGroup& operator=(const xThreadGroup&);
 
-		std::vector<xsmartPtr<xEthreadbase>> m_threads;
-		typedef std::vector<xsmartPtr<xEthreadbase>>::const_iterator citr_type;
+		std::vector<xsmartPtr<xEthreadbase> > m_threads;
+		typedef std::vector<xsmartPtr<xEthreadbase> >::const_iterator citr_type;
 	};
 
 	/*

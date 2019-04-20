@@ -4,10 +4,11 @@
 2）继承定时器基类，然后可以一直执行。
 3) 确保在主线程会等待，不会马上退出，不然定时器线程也没有足够的时间执行。
 */
-#include "xAutoLock.h"
+//#include "xAutoLock.h"
+#include "xsema.h"
 #include "xthreadbase.h"
 namespace SEABASE{
-	//定时器，秒级。
+	//定时器，毫秒级。
 	class OnTimerBase:public Threadbase
 	{
 	public:	
@@ -18,7 +19,6 @@ namespace SEABASE{
 		}
 		void stopTimer()
 		{
-			//join();
 			destory();
 			m_bIsstop=true;
 		}
@@ -27,20 +27,14 @@ namespace SEABASE{
 		virtual void run()
 		{
 			while(!m_bIsstop){
-				xAutoLock L(m_mutex);
-				struct timespec tc;
-				tc.tv_sec=m_TimeOut;
-				tc.tv_nsec=0;
-				//m_SleepCondition.timewait(m_mutex,tc);
-				m_SleepCondition.timewait(m_mutex,tc);
+				m_sema.wait(m_TimeOut);
 				this->timeout();
 			}
 
 		}
 	private:
 		int m_TimeOut;
-		xCondition m_SleepCondition;
-		xMutex m_mutex;
+		xSemaphore m_sema;
 		bool m_bIsstop;
 	};
 }

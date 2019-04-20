@@ -93,7 +93,7 @@ bool xEthreadbase::join()
 		}
 	}
 #else
-	pthread_join(_thread,NULL);
+	pthread_join(_thread_id,NULL);
 #endif
 	m_state = JOINED;
 	return 0;
