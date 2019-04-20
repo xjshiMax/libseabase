@@ -25,7 +25,7 @@
 #include <semaphore.h>
 #endif
 #ifdef _WIN32
-#define INFINITE INFINITE
+//#define INFINITE INFINITE
 #define _sem_t HANDLE
 #else
 #define INFINITE            0xFFFFFFFF 

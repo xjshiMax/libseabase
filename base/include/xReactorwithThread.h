@@ -4,6 +4,7 @@
 2） 给复用加一个自己的工作线程，start（）以后，主线程仍然能正常执行，
 */
 #pragma once
+#include <stdio.h>
 #include "xthreadbase.h"
 #include "xReactor.h"
 namespace SEABASE{

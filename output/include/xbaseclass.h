@@ -20,7 +20,7 @@ class xEventDemultiplexer;
 typedef void (*pcallbackptr)(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg);
 	//注册事件结构体
 typedef struct xEvent{
-	struct xEvent()
+	xEvent()
 	{
 		reset();
 	}

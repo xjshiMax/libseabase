@@ -2,6 +2,7 @@
 //
 #include "xEtcpserver.h"
 #include "xReactorwithThread.h"
+#include <stdio.h>
 #include <vector>
 using namespace std;
 using namespace SEABASE;
@@ -42,7 +43,7 @@ int main(int argc, char* argv[])
 {
 	xReactor reactor;
 	tcpser mytcp;
-	int listenfd = mytcp.startTcpSvr("0.0.0.0",8000);
+	int listenfd = mytcp.startTcpSvr("192.168.1.12",8000);
 
 	reactor.RegisterHandler(&mytcp,listenfd);
 	reactor.start();

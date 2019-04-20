@@ -1,7 +1,7 @@
 //2019-4-15
 //xjshi 
 //添加消息put-get模型处理机制
-//直接修改run（）里面的内容使用
+//直接修改run（）里面的内容使用 或者继承以后重写run方法。
 #pragma  once
 #include "xsync_queue.h"
 #include "xthreadbase.h"

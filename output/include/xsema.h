@@ -18,7 +18,18 @@
 #else
 #include <unistd.h>
 #include <stdint.h>
+#include <signal.h>
+#include <errno.h>
+#include <sys/time.h>
+#include <linux/unistd.h>
 #include <semaphore.h>
+#endif
+#ifdef _WIN32
+//#define INFINITE INFINITE
+#define _sem_t HANDLE
+#else
+#define INFINITE            0xFFFFFFFF 
+#define _sem_t sem_t
 #endif
 namespace SEABASE
 {
@@ -74,7 +85,9 @@ namespace SEABASE
 		xSemaphore(const xSemaphore&);
 		xSemaphore& operator =(const xSemaphore&);
 	private:
-		HANDLE _sem;
+
+		_sem_t _sem;
+
 	};
 }
 
