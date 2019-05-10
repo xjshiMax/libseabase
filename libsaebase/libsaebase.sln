@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openssltest", "openssltest\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqliteText", "sqliteText\sqliteText.vcxproj", "{00145570-EE1A-45AD-A83C-C8A452FD4E4D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "redistest", "redistest\redistest.vcxproj", "{CA0F9833-9890-4075-A856-CDDBBF904C13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -125,6 +127,12 @@ Global
 		{00145570-EE1A-45AD-A83C-C8A452FD4E4D}.Release|Win32.ActiveCfg = Release|Win32
 		{00145570-EE1A-45AD-A83C-C8A452FD4E4D}.Release|Win32.Build.0 = Release|Win32
 		{00145570-EE1A-45AD-A83C-C8A452FD4E4D}.Release|x64.ActiveCfg = Release|Win32
+		{CA0F9833-9890-4075-A856-CDDBBF904C13}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CA0F9833-9890-4075-A856-CDDBBF904C13}.Debug|Win32.Build.0 = Debug|Win32
+		{CA0F9833-9890-4075-A856-CDDBBF904C13}.Debug|x64.ActiveCfg = Debug|Win32
+		{CA0F9833-9890-4075-A856-CDDBBF904C13}.Release|Win32.ActiveCfg = Release|Win32
+		{CA0F9833-9890-4075-A856-CDDBBF904C13}.Release|Win32.Build.0 = Release|Win32
+		{CA0F9833-9890-4075-A856-CDDBBF904C13}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

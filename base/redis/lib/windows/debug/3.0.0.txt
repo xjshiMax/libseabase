@@ -1,0 +1,5 @@
+使用hiredis.lib时，
+需要链接
+#pragma  comment(lib,"../msvs/debug/hiredis.lib")
+
+#pragma  comment(lib,"ws2_32.lib")

@@ -21,6 +21,7 @@ using namespace std;
 	 FLAGS_logbufsecs = 0;  // Set log output speed(s)
 	 FLAGS_max_log_size = 1024;  // Set max log file size
 	 FLAGS_stop_logging_if_full_disk = true;  // If disk is full
+	 //FLAGS_minloglevel = loglevel;
 	 char str[20] = "hello log!";
 	 LOG(INFO) << str;
 	 string cStr = "hello google!";
