@@ -17,8 +17,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libseabase", "libseabase\li
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ontimetest", "ontimetest\ontimetest.vcxproj", "{5F1E907D-F29B-45DE-854C-64327AB40D09}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prcelib", "prcelib\prcelib.vcxproj", "{AF1F3C79-E89A-4B2F-B00A-1C70770AA5B4}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pcredll", "pcredll\pcredll.vcxproj", "{AF1A7384-151A-4275-B1E6-7365432E6952}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openssltest", "openssltest\openssltest.vcxproj", "{AFBB9BE0-4CFE-49DA-85EC-BC43FDD9AFFE}"
@@ -26,6 +24,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqliteText", "sqliteText\sqliteText.vcxproj", "{00145570-EE1A-45AD-A83C-C8A452FD4E4D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "redistest", "redistest\redistest.vcxproj", "{CA0F9833-9890-4075-A856-CDDBBF904C13}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pcretest", "pcretest\pcretest.vcxproj", "{29633705-AE89-46A0-89E3-13CBDCFD8BE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,14 +97,6 @@ Global
 		{5F1E907D-F29B-45DE-854C-64327AB40D09}.Release|Win32.ActiveCfg = Release|Win32
 		{5F1E907D-F29B-45DE-854C-64327AB40D09}.Release|Win32.Build.0 = Release|Win32
 		{5F1E907D-F29B-45DE-854C-64327AB40D09}.Release|x64.ActiveCfg = Release|Win32
-		{AF1F3C79-E89A-4B2F-B00A-1C70770AA5B4}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AF1F3C79-E89A-4B2F-B00A-1C70770AA5B4}.Debug|Win32.Build.0 = Debug|Win32
-		{AF1F3C79-E89A-4B2F-B00A-1C70770AA5B4}.Debug|x64.ActiveCfg = Debug|x64
-		{AF1F3C79-E89A-4B2F-B00A-1C70770AA5B4}.Debug|x64.Build.0 = Debug|x64
-		{AF1F3C79-E89A-4B2F-B00A-1C70770AA5B4}.Release|Win32.ActiveCfg = Release|Win32
-		{AF1F3C79-E89A-4B2F-B00A-1C70770AA5B4}.Release|Win32.Build.0 = Release|Win32
-		{AF1F3C79-E89A-4B2F-B00A-1C70770AA5B4}.Release|x64.ActiveCfg = Release|x64
-		{AF1F3C79-E89A-4B2F-B00A-1C70770AA5B4}.Release|x64.Build.0 = Release|x64
 		{AF1A7384-151A-4275-B1E6-7365432E6952}.Debug|Win32.ActiveCfg = Debug|Win32
 		{AF1A7384-151A-4275-B1E6-7365432E6952}.Debug|Win32.Build.0 = Debug|Win32
 		{AF1A7384-151A-4275-B1E6-7365432E6952}.Debug|x64.ActiveCfg = Debug|x64
@@ -133,6 +125,12 @@ Global
 		{CA0F9833-9890-4075-A856-CDDBBF904C13}.Release|Win32.ActiveCfg = Release|Win32
 		{CA0F9833-9890-4075-A856-CDDBBF904C13}.Release|Win32.Build.0 = Release|Win32
 		{CA0F9833-9890-4075-A856-CDDBBF904C13}.Release|x64.ActiveCfg = Release|Win32
+		{29633705-AE89-46A0-89E3-13CBDCFD8BE2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{29633705-AE89-46A0-89E3-13CBDCFD8BE2}.Debug|Win32.Build.0 = Debug|Win32
+		{29633705-AE89-46A0-89E3-13CBDCFD8BE2}.Debug|x64.ActiveCfg = Debug|Win32
+		{29633705-AE89-46A0-89E3-13CBDCFD8BE2}.Release|Win32.ActiveCfg = Release|Win32
+		{29633705-AE89-46A0-89E3-13CBDCFD8BE2}.Release|Win32.Build.0 = Release|Win32
+		{29633705-AE89-46A0-89E3-13CBDCFD8BE2}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
