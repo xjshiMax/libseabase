@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include <string>
 #include "../../base/sqlite3/include/sqlite3.h"
 #pragma comment(lib,"../../base/sqlite3/lib/windows/32/sqlit.lib")
 using namespace std;
@@ -106,12 +107,30 @@ void Showchange(sqlite3*pdb)
 	int count = sqlite3_changes(pdb);
 	printf("[DB Log]: <UPADTE> %d item changes\n", count);
 }
+//查看表是否存在
+
+bool IstableExist(sqlite3*pdb,string tablename)
+{
+	  std::string strFindTable = "SELECT COUNT(*) FROM '" + tablename + "'";
+	  int nrow = 0;
+	  int ncolumn = 0;
+	  char ** azResult; //返回结果集
+	  char*errmsg=NULL;
+	  int iret= sqlite3_get_table(pdb , strFindTable.c_str() , &azResult , &nrow , &ncolumn , &errmsg );	//age,sex,17,male,18,female, 结果集为每一行平铺的一维数组
+	 if(iret==SQLITE_OK)
+		 return true;
+	 return false;
+
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
 	sqlite3* pdb=NULL;
 	Createdb(&pdb);
 	char*mesg=NULL;
+	IstableExist(pdb,"student");
 	CreateTable(pdb,"create table student (age int ,sex varchar)",&mesg);
+
+	IstableExist(pdb,"student")	 ;
 	Showchange(pdb);
 	InsertRecord(pdb,"Insert into student (age,sex) values (17,'male')",&mesg);
 	Showchange(pdb);
