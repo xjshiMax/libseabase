@@ -65,6 +65,8 @@ public:
 		return InterlockedIncrement(&m_val) - 1;
 #elif defined(USE_x386_ASM_ATOMIC)
 		return add(1)
+#else
+		//__sync_add_and_fetch(&m_val,1);
 #endif
 	}
 	unsigned int dec()

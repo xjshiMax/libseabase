@@ -36,7 +36,7 @@
 #define SEA_mutex_t pthread_mutex_t
 #define INFINITE            0xFFFFFFFF 
 #endif
-
+#include "xbaseclass.h"
 namespace SEABASE
 {
 	enum xstatus{
@@ -133,4 +133,22 @@ namespace SEABASE
             volatile bool _locked;
             xEmutex* _lock;
 	};
+
+
+//2019/6/7
+//Ìí¼Ó×ÔÐýËø
+class xSpinLock:public Noncopyable
+{
+	xSpinLock();
+	~xSpinLock();
+	void lock() const;
+	inline void release() const;
+	inline bool tryLock() const;
+protected:
+#ifdef WIN32
+	mutable volatile LONG m_lock;
+#else
+	mutable pthread_spinlock_t m_lock;
+#endif
+};
 }

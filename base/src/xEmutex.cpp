@@ -122,3 +122,49 @@ int32_t xEmutex::unlock() {
 	return (0 == ret ? 0 : SEA_SYSERROR);
 #endif
 } 
+
+xSpinLock::xSpinLock()
+{
+#ifdef WIN32
+	m_lock=0;
+#else
+	pthread_spin_init(&m_lock,0);
+#endif
+
+}
+xSpinLock::~xSpinLock()
+{
+#ifdef WIN32
+	
+#else
+	pthread_spin_destroy(&m_Lock);
+#endif
+}
+void xSpinLock::lock() const
+{
+#ifdef WIN32
+	InterlockedExchange(&m_lock,0);
+#else
+	int RetCode = pthread_spin_lock(&m_Lock);
+#endif
+}
+void xSpinLock::release() const
+{
+#ifdef WIN32
+	InterlockedExchange(&m_lock,1);
+#else
+	int RetCode = pthread_spin_unlock(&m_Lock);
+#endif
+}
+bool xSpinLock::tryLock() const
+{
+#ifdef WIN32
+	return InterlockedExchange(&m_lock,1)!=0;
+#else
+	int RetCode = pthread_spin_trylock(&m_Lock);
+	if (RetCode == 0)
+		return true;
+	else
+		return false;
+#endif
+}
