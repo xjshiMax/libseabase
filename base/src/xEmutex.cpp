@@ -137,7 +137,7 @@ xSpinLock::~xSpinLock()
 #ifdef WIN32
 	
 #else
-	pthread_spin_destroy(&m_Lock);
+	pthread_spin_destroy(&m_lock);
 #endif
 }
 void xSpinLock::lock() const
@@ -145,7 +145,7 @@ void xSpinLock::lock() const
 #ifdef WIN32
 	InterlockedExchange(&m_lock,0);
 #else
-	int RetCode = pthread_spin_lock(&m_Lock);
+	int RetCode = pthread_spin_lock(&m_lock);
 #endif
 }
 void xSpinLock::release() const
@@ -153,7 +153,7 @@ void xSpinLock::release() const
 #ifdef WIN32
 	InterlockedExchange(&m_lock,1);
 #else
-	int RetCode = pthread_spin_unlock(&m_Lock);
+	int RetCode = pthread_spin_unlock(&m_lock);
 #endif
 }
 bool xSpinLock::tryLock() const
@@ -161,7 +161,7 @@ bool xSpinLock::tryLock() const
 #ifdef WIN32
 	return InterlockedExchange(&m_lock,1)!=0;
 #else
-	int RetCode = pthread_spin_trylock(&m_Lock);
+	int RetCode = pthread_spin_trylock(&m_lock);
 	if (RetCode == 0)
 		return true;
 	else

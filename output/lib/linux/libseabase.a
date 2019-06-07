@@ -4,7 +4,7 @@ xDemultiplexerSelect.cpp/
 xEventDemultiplexer.cpp/
 xEthreadpool.cpp/
 
-xtimeheap.cpp/  1553310996  0     0     100755  2406      `
+xtimeheap.cpp/  1559887525  0     0     100644  2290      `
 #include "xtimeheap.h"
 using namespace SEABASE;
 void xtime_heap::percolate_down(int hole)
@@ -121,7 +121,7 @@ void xtime_heap::tick()
 		pop_timer();
 		temp=array[0];
 	}
-}xTimeuil.cpp/   1555735464  0     0     100755  9299      `
+}xTimeuil.cpp/   1559887525  0     0     100644  8974      `
 #include "xTimeuil.h"
 #include <iostream>
 #include "xStringuil.h"
@@ -447,8 +447,7 @@ namespace SEABASE
     }
 }
 
-
-/0              1555735702  0     0     100755  1791      `
+/0              1559887525  0     0     100644  1708      `
 //xjshi 2019/3/13
 //重构hpp
 #include"xDemultiplexerSelect.h"
@@ -532,8 +531,7 @@ int xSelectDemultiplexer::UnrequestEvent(SEABASE::handle_t handle)
 	return 0;
 }
 
-#endif
-xStringuil.cpp/ 1555729391  0     0     100755  9226      `
+#endifxStringuil.cpp/ 1559887525  0     0     100644  8879      `
 /***********************************************************************
   * Copyright (c) 2012, Baidu Inc. All rights reserved.
   * 
@@ -881,7 +879,8 @@ namespace SEABASE {
 	xEmutex xStringUtil::stMutex;
 }
 
-xthreadPool.cpp/1552805141  0     0     100755  2550      `
+
+xthreadPool.cpp/1559887525  0     0     100644  2463      `
 #include "xthreadPool.h"
 using namespace SEABASE;
 bool xsimpleThreadPool::shutdown=false;
@@ -970,7 +969,8 @@ void xthreadPool::joinAllThread()
 		ite++;
 	}
 
-}xEtcpserver.cpp/1555602333  0     0     100755  987       `
+}
+xEtcpserver.cpp/1559887525  0     0     100644  940       `
 #include "xEtcpserver.h"
 using namespace SEABASE;
 
@@ -1018,8 +1018,7 @@ int xtcpserver::stopTcpSvr()
 {
 	m_tcplistener.stoplisten();
 	return 0;
-}
-xNetdata.cpp/   1555730480  0     0     100755  1826      `
+}xNetdata.cpp/   1559887525  0     0     100644  1759      `
 #include "xNetdata.h"
 using namespace SEABASE;
 
@@ -1087,7 +1086,8 @@ void Eventcallback::DataCallback(int sockfd,xEventDemultiplexer*Demultiplexer,vo
 void Eventcallback::ErrCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg)
 {
 
-}/26             1555736895  0     0     100755  2503      `
+}
+/26             1559887525  0     0     100644  2392      `
 //xjshi 2019/3/13
 //重构hpp
 #include "xEventDemultiplexer.h"
@@ -1199,8 +1199,7 @@ int xEpollDemultiplexer::UnrequestEvent(handle_t handle)
 }
 
 #endif
-
-xsema.cpp/      1555737031  0     0     100755  2251      `
+xsema.cpp/      1559887525  0     0     100644  2169      `
 #include "xsema.h"
 using namespace SEABASE;
 
@@ -1327,7 +1326,7 @@ int32_t xSemaphore::signal()
 	return (0==ret?0:SEA_SYSERROR);
 #endif
 }
-xthreadbase.cpp/1555737063  0     0     100755  3000      `
+xthreadbase.cpp/1559887525  0     0     100644  2861      `
 #include "xthreadbase.h"
 using namespace SEABASE;
 
@@ -1467,7 +1466,8 @@ void xThread::destory()
 		//pthread_exit((void*)&thread_return);
 #endif
 	}
-}xEmutex.cpp/    1555737197  0     0     100755  2242      `
+}
+xEmutex.cpp/    1559889186  0     0     100644  2953      `
 #include "xEmutex.h"
 using namespace SEABASE;
 #ifndef _WIN32
@@ -1591,7 +1591,54 @@ int32_t xEmutex::unlock() {
 	ret = pthread_mutex_unlock(&_mutex);
 	return (0 == ret ? 0 : SEA_SYSERROR);
 #endif
-} /51             1555737176  0     0     100755  5163      `
+} 
+
+xSpinLock::xSpinLock()
+{
+#ifdef WIN32
+	m_lock=0;
+#else
+	pthread_spin_init(&m_lock,0);
+#endif
+
+}
+xSpinLock::~xSpinLock()
+{
+#ifdef WIN32
+	
+#else
+	pthread_spin_destroy(&m_lock);
+#endif
+}
+void xSpinLock::lock() const
+{
+#ifdef WIN32
+	InterlockedExchange(&m_lock,0);
+#else
+	int RetCode = pthread_spin_lock(&m_lock);
+#endif
+}
+void xSpinLock::release() const
+{
+#ifdef WIN32
+	InterlockedExchange(&m_lock,1);
+#else
+	int RetCode = pthread_spin_unlock(&m_lock);
+#endif
+}
+bool xSpinLock::tryLock() const
+{
+#ifdef WIN32
+	return InterlockedExchange(&m_lock,1)!=0;
+#else
+	int RetCode = pthread_spin_trylock(&m_lock);
+	if (RetCode == 0)
+		return true;
+	else
+		return false;
+#endif
+}
+/51             1559887525  0     0     100644  4962      `
 #include "xEthreadpool.h"
 using namespace SEABASE;
 /*class xShareable*/
@@ -1865,8 +1912,7 @@ int xThreadPool::addthread(int nthreads) {
 		}
 	}
 	return ret;
-}
-xReactor.cpp/   1555602333  0     0     100755  1997      `
+}xReactor.cpp/   1559887525  0     0     100644  1912      `
 //xjshi 2019/3/13 
 //重构hpp xReacotr.cpp
 
@@ -1952,8 +1998,7 @@ int xReactorImplentation::RegisterTimeTask(xheaptimer* timerevent)
 	m_eventtimer->add_timer(timerevent);
 	return 0;
 }
-xReactor* ReactorInstance::m_reactor=NULL;
-xEtcpclient.cpp/1555731428  0     0     100755  648       `
+xReactor* ReactorInstance::m_reactor=NULL;xEtcpclient.cpp/1559887525  0     0     100644  623       `
 #include "xEtcpclient.h"
 using namespace  SEABASE;
 
