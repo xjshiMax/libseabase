@@ -76,7 +76,7 @@ inline static int BindSocket(int socket,struct sockaddr*addr,socklen_t addrlen)
 	//struct sockaddr 
 	return bind(socket,addr,addrlen);
 }
-// setsockopt: 用于任意类型，任意接口的设置选项值。尽管再不同协议层上存在选项，但本函数仅定义了最高的
+// setsockopt: 用于任意类型，任意接口的设置选项值。尽管在不同协议层上存在选项，但本函数仅定义了最高的
 //				“套接口”层次上的选项。选项影响套接口的操作，如是否在普通数据流中接收，广播数据是否可以
 //				从套接口接收
 /*

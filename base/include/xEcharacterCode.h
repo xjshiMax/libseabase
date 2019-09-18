@@ -17,6 +17,7 @@ namespace SEABASE
 {
     class CharacterCode
     {
+    public:
         static int GetCharacterTpye();
         static string Gb2312ToUTF_8(char* gb2312);
         static bool Ascii2utf8();

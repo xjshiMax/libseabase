@@ -23,7 +23,7 @@ bool xEFile::MakePath(const string& path)
         //参数：sourceFile 源文件
         //      destFle    目标文件名称
         //     overwrite   是否覆盖
-bool xEFile::Copy(const string& sourceFile, const string& destFile, bool overwrite = false)
+bool xEFile::Copy(const string& sourceFile, const string& destFile, bool overwrite )
 {
 #ifdef WIN32
     if (!canRead(sourceFile))
@@ -203,7 +203,8 @@ int xEFile::GetFileSize(const string &path)
     {
         return 0;
     }
-#ifdef
+#if 0
+#ifdef WIN32
     struct _stat status;
     if (0 == _stat(path.c_str(), &status))
     {
@@ -226,6 +227,8 @@ int xEFile::GetFileSize(const string &path)
         //获取失败
         return 0;
     }
+#endif
+
 #endif
 }
 

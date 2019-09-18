@@ -14,6 +14,7 @@ namespace SEABASE
 {
     class xEFile
     {
+    public:
         //创建路径(不可自动创建多级路径)
         //参数：path 需要创建的文件夹路径
         //返回值：成功返回true , 失败返回false
