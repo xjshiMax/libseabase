@@ -13,18 +13,18 @@
 #include "openssl/pkcs12.h"
 #include "openssl/evp.h"
 #include "openssl/ossl_typ.h"
-#include "openssl/evp_locl.h"
+//#include "openssl/evp_locl.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 /*#include "openssl/evp_locl"*/
+#include <Windows.h>
 using namespace std;
 //#pragma comment(lib,"windows/libcrypto.lib")
-#pragma comment(lib,"../../base/openssl/lib/windows/lib32/libssl_static.lib")
-#pragma comment(lib,"../../base/openssl/lib/windows/lib32/libcrypto_static.lib")
+#pragma comment(lib,"../../base/openssl/lib/windows/lib32/debug/libssl.lib")
+#pragma comment(lib,"../../base/openssl/lib/windows/lib32/debug/libcrypto.lib")
 //#pragma comment(lib,"E:/workstation/libsaebase/base/openssl/lib/windows/libssl_static.lib")
 //#pragma comment(lib,"../../base/openssl/lib/windows/libcrypto_static.lib")
-
 void sha1crypt()
 {
 	unsigned char digest[SHA_DIGEST_LENGTH];
@@ -97,20 +97,42 @@ std::string rsa_pub_encrypt(const std::string &clearText, const std::string &pub
 }  
 void sha256crypt()
 {
-	unsigned char digest[SHA256_DIGEST_LENGTH];
-    const unsigned char string_[] ="你好";
-    int len=strlen((const char*)string_);
-// 	SHA256_CTX ctx;;
-// 	SHA256_Init(&ctx);
-// 	SHA256_Update(&ctx, string_, strlen(string_));
-// 	SHA256_Final(digest, &ctx);
+    unsigned char digest[SHA256_DIGEST_LENGTH+1]={0};
+    string string_ ="backUrl=39.96.46.166&body=01&limitCreditPay=0&mchCreateIp=39.96.46.166&mchntOrderId=201907090928550000000000&signCertId=17092992268642546173&signMethod=RSA2&timeExpired=20190709092955&timeStart=20190709092855&transAt=1&version=1.0.0";
+    int len=string_.length();
+    int lensizeof=sizeof(string_);
+    int lenstelen=strlen(string_.c_str());
+//  	SHA256_CTX ctx;;
+//  	SHA256_Init(&ctx);
+//  	SHA256_Update(&ctx, string_, sizeof(string_));
+//  	SHA256_Final(digest, &ctx);
 	char mdString[SHA256_DIGEST_LENGTH*2+1];
-    SHA256((const unsigned char*)string_,sizeof(string_),digest);
+    SHA256((const unsigned char*)string_.c_str(),len,digest);
 	for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
 
 		sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
 
 	printf("SHA1 digest: %s\n", mdString);
+}
+int littletest()
+{
+    unsigned char md[33] = {0};
+    const unsigned char* string_ =(const unsigned char*)"backUrl=39.96.46.166&body=01&limitCreditPay=0&mchCreateIp=39.96.46.166&mchntOrderId=201907090928550000000000&signCertId=17092992268642546173&signMethod=RSA2&timeExpired=20190709092955&timeStart=20190709092855&transAt=1&version=1.0.0";
+
+    SHA256((const unsigned char *)string_, strlen((const char*)string_), md);  
+
+    int i = 0;  
+    char buf[65] = {0};  
+    char tmp[3] = {0};  
+    for(i = 0; i < 32; i++ )  
+    {  
+        sprintf(tmp,"%02X", md[i]);  
+        strcat(buf, tmp);  
+    }  
+
+    cout << buf << endl;   
+
+    return 0;  
 }
 
 int pfxparse(string clearText)
@@ -180,7 +202,7 @@ int pfxparse(string clearText)
 //    }
 	return 0;
 }
-int32_t Base64Encode(const char *encoded, int encoded_length, char *decoded){
+int Base64Encode(const char *encoded, int encoded_length, char *decoded){
     return EVP_EncodeBlock((unsigned char*)decoded, (const unsigned char*)encoded, encoded_length);
 }
 void base64_encode(const char * input,int in_length,char** output)
@@ -287,36 +309,149 @@ void testsort()
     }
 
 }
-int main() {
-	//sha256crypt();
-// 	char*p="3082010a02 82 01 01 00 ab 1e a8 af 9c f0 3a be 26 cf f5 f4 06 d5 bb 6c cb c1 7f e4 94 14 21 54 58 a0 58 24 6d 85 b3 41 a2 5c 91 87 6d 86 78 87 74 df 87 df fb 0b c6 59 06 7f 6e 83 f5 36 d8 12 01 1c 4b 41 93 22 4b 93 d1 62 54 ee 16 ea 26 49 ec 70 5c e9 a8 db 5e 5d 69 32 a9 86 aa 4b 91 85 5f ab be 70 e1 06 7a 74 b2 6d 69 9d 2c cd 95 5e 22 cc 47 7f 95 46 10 0f 1c 17 f6 86 8e 8e 32 aa ab ec 21 cd 56 ef ff 4c 33 68 57 67 6f b3 16 ba 55 81 52 37 1c 86 d2 4a a9 82 d8 5b 1d bb 70 a6 e0 8b 2d fc 38 97 9a ac 63 72 76 68 81 af 0e fd 30 17 4a 4a 7b d4 a1 4d f1 30 5a 71 e0 c3 2e cf 2b ad 83 09 30 32 aa 41 89 93 6a 18 30 f0 c7 1c ac 6e b7 71 58 59 65 37 e7 94 b4 07 0f 9d 68 07 66 46 e0 7c 79 aa 0e a1 1d 16 0c 93 47 d5 70 cf d7 cb fb 94 34 7a f1 d4 05 d3 a8 a7 e5 86 dc 2d 27 47 3e 2f 65 a8 57 73 02 03 01 00 01";
-// 	while(*p!='\0')
-// 	{
-// 		if(*p!=' ')
-// 			printf("%c",*p);
-// 		p++;
-// 	}
-			//rsa_pub_encrypt("are you ok","30 82 01 0a 02 82 01 01 00 ab 1e a8 af 9c f0 3a be 26 cf f5 f4 06 d5 bb 6c cb c1 7f e4 94 14 21 54 58 a0 58 24 6d 85 b3 41 a2 5c 91 87 6d 86 78 87 74 df 87 df fb 0b c6 59 06 7f 6e 83 f5 36 d8 12 01 1c 4b 41 93 22 4b 93 d1 62 54 ee 16 ea 26 49 ec 70 5c e9 a8 db 5e 5d 69 32 a9 86 aa 4b 91 85 5f ab be 70 e1 06 7a 74 b2 6d 69 9d 2c cd 95 5e 22 cc 47 7f 95 46 10 0f 1c 17 f6 86 8e 8e 32 aa ab ec 21 cd 56 ef ff 4c 33 68 57 67 6f b3 16 ba 55 81 52 37 1c 86 d2 4a a9 82 d8 5b 1d bb 70 a6 e0 8b 2d fc 38 97 9a ac 63 72 76 68 81 af 0e fd 30 17 4a 4a 7b d4 a1 4d f1 30 5a 71 e0 c3 2e cf 2b ad 83 09 30 32 aa 41 89 93 6a 18 30 f0 c7 1c ac 6e b7 71 58 59 65 37 e7 94 b4 07 0f 9d 68 07 66 46 e0 7c 79 aa 0e a1 1d 16 0c 93 47 d5 70 cf d7 cb fb 94 34 7a f1 d4 05 d3 a8 a7 e5 86 dc 2d 27 47 3e 2f 65 a8 57 73 02 03 01 00 01");
-	//sha1crypt();
-	//md5crypt();
-//     string entext="hello world";
-// 	pfxparse(entext);
-#if 0
-//     char *result=new char[100];
-//     memset(result,0,100);
-//     char origindata[]="hello world";
-//     int length=sizeof(origindata);
-//     base64_encode(origindata,length,&result);
-//     std::cout<<result<<endl;
-//     char*p;
-//     int decodelen=0;
-//     base64_decode(result,strlen(result),&p,&decodelen);
-//     std::cout<<*p;
+string GetBase64Enc(string rsatext)
+{
+#if 1
+    string finalresult="";
+    BIO * bmem = NULL;
+    BIO * b64 = NULL;
+    BUF_MEM * bptr = NULL;
+    int length=rsatext.length();
+    b64 = BIO_new(BIO_f_base64());
+    BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);// 默认每64个字符换行，设置不换行
+    bmem = BIO_new(BIO_s_mem());
+    b64 = BIO_push(b64, bmem);
+    BIO_write(b64, rsatext.c_str(), length);
+    BIO_flush(b64);
+    BIO_get_mem_ptr(b64, &bptr);
+
+    char * buff = (char *)malloc(bptr->length + 1);
+    memcpy(buff, bptr->data, bptr->length);
+    buff[bptr->length] = 0;
+    string strtemp=string(buff,bptr->length);
+    finalresult+=strtemp;
+    BIO_free_all(b64);
+    free(buff);
+    return finalresult;
 #endif
-    //char name[]="123456789";
-    //string strtemp=string(name,4);
-   // testsort();
-    sha256crypt();  
+    return "";
+}
+
+int pubkey_decrypt(const unsigned char *in, int in_len,
+    unsigned char **out, int &out_len)
+{
+    FILE* fp;
+    RSA *rsa = NULL;  
+    //m_sSSLKEY为pfx文件地址
+    if (!(fp = fopen("utp_test_sign.pfx", "rb"))) 
+    { 
+        fprintf(stderr, "Error opening file utp_test_sign.pfx\n");       
+        return NULL;     
+    }    
+    PKCS12 *p12= d2i_PKCS12_fp(fp, NULL);  
+    fclose (fp);    
+    if (!p12) {      
+        fprintf(stderr, "Error reading PKCS#12 file\n");   
+        //ERR_print_errors_fp(stderr);  
+        return NULL;   
+    } 
+    EVP_PKEY *pkey=NULL;     
+    X509 *x509=NULL;
+    STACK_OF(X509) *ca = NULL;
+    if (!PKCS12_parse(p12, "000000", &pkey, &x509, &ca)) {         
+        fprintf(stderr, "Error parsing PKCS#12 file\n");       
+        //ERR_print_errors_fp(stderr);
+        return NULL;
+    }
+
+    rsa=EVP_PKEY_get1_RSA(pkey);
+
+    out_len =  RSA_size(rsa);
+    *out =  (unsigned char *)malloc(out_len);
+    if(NULL == *out)
+    {
+        printf("pubkey_decrypt:malloc error!\n");
+        return -1;
+    }
+    memset((void *)*out, 0, out_len);
+
+    printf("pubkey_decrypt:Begin RSA_public_decrypt ...\n");
+    int ret =  RSA_private_decrypt(in_len, in, *out, rsa, RSA_NO_PADDING);
+
+    return ret;
+}
+
+// 公钥加密函数
+int pubkey_encrypt(const unsigned char *in, int in_len,
+    unsigned char **out, int &out_len)
+{
+    FILE* fp;
+    RSA *rsa = NULL;  
+    //m_sSSLKEY为pfx文件地址
+    if (!(fp = fopen("utp_test_sign.pfx", "rb"))) 
+    { 
+        fprintf(stderr, "Error opening file utp_test_sign.pfx\n");       
+        return NULL;     
+    }    
+    PKCS12 *p12= d2i_PKCS12_fp(fp, NULL);  
+    fclose (fp);    
+    if (!p12) {      
+        fprintf(stderr, "Error reading PKCS#12 file\n");   
+        //ERR_print_errors_fp(stderr);  
+        return NULL;   
+    } 
+    EVP_PKEY *pkey=NULL;     
+    X509 *x509=NULL;
+    STACK_OF(X509) *ca = NULL;
+    if (!PKCS12_parse(p12, "000000", &pkey, &x509, &ca)) {         
+        fprintf(stderr, "Error parsing PKCS#12 file\n");       
+        //ERR_print_errors_fp(stderr);
+        return NULL;
+    }
+
+    rsa=EVP_PKEY_get1_RSA(pkey);
+    out_len =  RSA_size(rsa);
+    *out =  (unsigned char *)malloc(out_len);
+    if(NULL == *out)
+    {
+        printf("pubkey_encrypt:malloc error!\n");
+        return -1;
+    }
+    memset((void *)*out, 0, out_len);
+
+    printf("pubkey_encrypt:Begin RSA_public_encrypt ...\n");
+    int ret =  RSA_public_encrypt(in_len, in, *out, rsa, RSA_PKCS1_PADDING/*RSA_NO_PADDING*/);
+
+
+    return ret;
+}
+char* Gb2312ToUTF_8(char* gb2312)
+{
+    int len=MultiByteToWideChar(CP_ACP,0,gb2312,-1,NULL,0);
+    wchar_t*wstr=new wchar_t[len+1];
+    memset(wstr,0,len+1);
+    MultiByteToWideChar(CP_ACP,0,gb2312,-1,wstr,len);
+    len=WideCharToMultiByte(CP_UTF8,0,wstr,-1,NULL,0,NULL,NULL);
+    char*str=new char[len+1];
+    memset(str,0,len+1);
+    WideCharToMultiByte(CP_UTF8,0,wstr,-1,str,len,NULL,NULL);
+    if(wstr)delete[] wstr;
+    return str;
+}
+int main() {
+	
+    char* firsttxt="上网";
+    char*secondtxt=Gb2312ToUTF_8(firsttxt);
+    unsigned char*pencrypt=new unsigned char[1024];
+    int encryptlen=strlen((char*)firsttxt);
+    int utf8len=strlen(secondtxt);
+    EVP_EncodeBlock(pencrypt,(unsigned char*)firsttxt,encryptlen);
+    memset(pencrypt,0,1024);
+    EVP_EncodeBlock(pencrypt,(unsigned char*)secondtxt,utf8len);
+    //char* debase64 = Base64Encode((char*)firsttxt.c_str(),firsttxt.length(),false);
+   // unsigned char*dectext;
+   // int declen=0;
+  //  pubkey_decrypt((const unsigned char*)debase64,strlen((const char*)debase64),&dectext,declen);
 	return 0;
 
 

@@ -30,7 +30,6 @@ namespace SEABASE
         virtual int FTP_DownLoadFile( void *deststream,string srcfile=""){return 0;};
         //获取进度
         virtual int FPT_GetProcessPoint(){return 0;};
-
     public:
         string m_username;
         string m_password;

@@ -230,6 +230,7 @@ int xEFile::GetFileSize(const string &path)
 #endif
 
 #endif
+    return 0;
 }
 
         //搜索符合条件的文件

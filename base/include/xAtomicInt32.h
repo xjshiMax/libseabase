@@ -28,9 +28,9 @@ public:
 	unsigned int get()
 	{
 #ifdef WIN32
-		return m_val;
+        return m_val;
 #elif defined USE_x386_ASM_ATOMIC
-		return m_val;
+        return m_val;
 
 #endif
 	}
@@ -51,12 +51,12 @@ public:
 	void		 sub(unsigned int value)
 	{
 #ifdef WIN32
-		InterlockedExchangeAdd(&m_val,-value);
+        InterlockedExchangeAdd(&m_val,-value);
 #elif defined(USE_x386_ASM_ATOMIC)
-		asm volatile ("lock; subl %1, %0"
-			:
-		: "m" (m_nVal), "r" (val)
-			: "memory", "cc");
+        asm volatile ("lock; subl %1, %0"
+            :
+        : "m" (m_nVal), "r" (val)
+            : "memory", "cc");
 #endif
 	}
 	unsigned int inc()
@@ -87,9 +87,9 @@ public:
 	void		 set(unsigned int value)
 	{
 #ifdef WIN32
-		InterlockedExchange(&m_val,value);
+        InterlockedExchange(&m_val,value);
 #elif defined(USE_x386_ASM_ATOMIC)
-		m_val=value;
+        m_val=value;
 #endif
 	}
 	unsigned int swap_when_equal(unsigned int with,unsigned int cmp)

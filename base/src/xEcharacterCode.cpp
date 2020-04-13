@@ -47,3 +47,39 @@ string CharacterCode::Gb2312ToUTF_8(char* gb2312)
     return strtemp;
 #endif
 }
+
+void CharacterCode::Ascii2BCD( char *bcd_buf, char *asc_buf,int num)
+{
+    int     i, len;
+
+    len = num / 2 ;
+    for ( i=0; i<len; i++)
+    {
+        if (asc_buf[i * 2 + 0] >= '0' && asc_buf[i * 2 + 0] <= '9')
+        {
+            bcd_buf[i] = (asc_buf[i * 2 + 0] - 48) * 16 ;
+        }
+        if (asc_buf[i * 2 + 0] >= 'A' && asc_buf[i * 2 + 0] <= 'Z')
+        {
+            bcd_buf[i] = (asc_buf[i * 2 + 0] - 'A' + 10) * 16 ;
+        }
+        if (asc_buf[i * 2 + 0] >= 'a' && asc_buf[i * 2 + 0] <= 'z')
+        {
+            bcd_buf[i] = (asc_buf[i * 2 + 0] - 'a' + 10) * 16 ;
+        }
+
+        if (asc_buf[i * 2 + 1] >= '0' && asc_buf[i * 2 + 1] <= '9')
+        {
+            bcd_buf[i] += (asc_buf[i * 2 + 1] - 48)  ;
+        }
+        if (asc_buf[i * 2 + 1] >= 'A' && asc_buf[i * 2 + 1] <= 'Z')
+        {
+            bcd_buf[i] += (asc_buf[i * 2 + 1] - 'A' + 10)  ;
+        }
+        if (asc_buf[i * 2 + 1] >= 'a' && asc_buf[i * 2 + 1] <= 'z')
+        {
+            bcd_buf[i] += (asc_buf[i * 2 + 1] - 'a' + 10)  ;
+        }
+    }
+    //		bcd_buf[i]=((asc_buf[2*i] & 0x0f) << 4)+(asc_buf[2*i+1] & 0x0f);
+}

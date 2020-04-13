@@ -93,6 +93,12 @@
     <ClInclude Include="..\..\base\include\xsync_queue.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\base\include\xEcharacterCode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xEFile.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\base\src\xDemultiplexerSelect.cpp">
@@ -135,6 +141,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\base\src\xNetdata.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xEFile.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xEcharacterCode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

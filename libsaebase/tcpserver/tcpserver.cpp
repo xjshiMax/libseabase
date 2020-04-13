@@ -30,7 +30,9 @@ class tcpser :public xtcpserver
 	}
 	virtual void Ondata(int socketfd,char*data,int len)
 	{
-		printf("%s\n",data);
+        static int i=0;
+		printf("%s %d\n",data,i++);
+        SendSocket(socketfd,"hello!\n",7);
 		return ;
 	}
 	virtual void Onclose(int socketfd)
@@ -43,7 +45,7 @@ int main(int argc, char* argv[])
 {
 	xReactor reactor;
 	tcpser mytcp;
-	int listenfd = mytcp.startTcpSvr("172.30.1.79",8000);
+	int listenfd = mytcp.startTcpSvr("172.28.71.53",8000);
 
 	reactor.RegisterHandler(&mytcp,listenfd);
 	reactor.start();

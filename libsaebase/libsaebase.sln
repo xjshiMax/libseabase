@@ -31,6 +31,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pugixmltest", "pugixmltest\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "curltest", "curltest\curltest.vcxproj", "{8971A15D-0C27-418E-9E69-46F9326D12B7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qrtest", "qrtest\qrtest.vcxproj", "{6D5BB5F6-251D-4B96-B3FF-2907CFAA999B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dlltest", "dlltest\dlltest.vcxproj", "{3A0E8FB5-BFCB-4F10-9DCB-E345E8D5EDBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -147,6 +151,18 @@ Global
 		{8971A15D-0C27-418E-9E69-46F9326D12B7}.Release|Win32.ActiveCfg = Release|Win32
 		{8971A15D-0C27-418E-9E69-46F9326D12B7}.Release|Win32.Build.0 = Release|Win32
 		{8971A15D-0C27-418E-9E69-46F9326D12B7}.Release|x64.ActiveCfg = Release|Win32
+		{6D5BB5F6-251D-4B96-B3FF-2907CFAA999B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6D5BB5F6-251D-4B96-B3FF-2907CFAA999B}.Debug|Win32.Build.0 = Debug|Win32
+		{6D5BB5F6-251D-4B96-B3FF-2907CFAA999B}.Debug|x64.ActiveCfg = Debug|Win32
+		{6D5BB5F6-251D-4B96-B3FF-2907CFAA999B}.Release|Win32.ActiveCfg = Release|Win32
+		{6D5BB5F6-251D-4B96-B3FF-2907CFAA999B}.Release|Win32.Build.0 = Release|Win32
+		{6D5BB5F6-251D-4B96-B3FF-2907CFAA999B}.Release|x64.ActiveCfg = Release|Win32
+		{3A0E8FB5-BFCB-4F10-9DCB-E345E8D5EDBA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3A0E8FB5-BFCB-4F10-9DCB-E345E8D5EDBA}.Debug|Win32.Build.0 = Debug|Win32
+		{3A0E8FB5-BFCB-4F10-9DCB-E345E8D5EDBA}.Debug|x64.ActiveCfg = Debug|Win32
+		{3A0E8FB5-BFCB-4F10-9DCB-E345E8D5EDBA}.Release|Win32.ActiveCfg = Release|Win32
+		{3A0E8FB5-BFCB-4F10-9DCB-E345E8D5EDBA}.Release|Win32.Build.0 = Release|Win32
+		{3A0E8FB5-BFCB-4F10-9DCB-E345E8D5EDBA}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

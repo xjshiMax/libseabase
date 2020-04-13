@@ -27,10 +27,10 @@ struct CustomProgress
 
 // work for both download and upload
 int progressCallback(void *p,
-                     curl_off_t dltotal,
-                     curl_off_t dlnow,
-                     curl_off_t ultotal,
-                     curl_off_t ulnow)
+                     curl_off_t dltotal,   //需要下载总字节
+                     curl_off_t dlnow,     //已经下载字节数
+                     curl_off_t ultotal,   //将要上传总字节
+                     curl_off_t ulnow)     //已经上传字节数
 {
     struct CustomProgress *progress = (struct CustomProgress *)p;
     CURL *curl = progress->curl;
@@ -93,19 +93,20 @@ size_t readfunc(void *ptr, size_t size, size_t nmemb, void *stream)
 
     // get user_key pair
     char user_key[1024] = {0};
-    sprintf(user_key, "%s:%s", username, password);
+    sprintf(user_key, "%s:%s", m_username.c_str(), m_password.c_str());
 
     FILE *file;
     long uploaded_len = 0;
     CURLcode ret = CURLE_GOT_NOTHING;
-    file = fopen(local_file_path, "rb");
+    file = fopen(localfilepath.c_str(), "rb");
     if (file == NULL) 
     {
         perror(NULL);
         return 0;
     }
+    string remote_file_path=m_url+"/"+remotepath;
     curl_easy_setopt(curlhandle, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(curlhandle, CURLOPT_URL, remote_file_path);
+    curl_easy_setopt(curlhandle, CURLOPT_URL, remote_file_path.c_str());
     curl_easy_setopt(curlhandle, CURLOPT_USERPWD, user_key);
     if (timeout)
         curl_easy_setopt(curlhandle, CURLOPT_FTP_RESPONSE_TIMEOUT, timeout);
@@ -120,13 +121,15 @@ size_t readfunc(void *ptr, size_t size, size_t nmemb, void *stream)
     // set upload progress
     curl_easy_setopt(curlhandle, CURLOPT_XFERINFOFUNCTION, progressCallback);
     struct CustomProgress prog;
+    prog.curl=curlhandle;
+    prog.lastruntime=0;
     curl_easy_setopt(curlhandle, CURLOPT_XFERINFODATA, &prog);
     curl_easy_setopt(curlhandle, CURLOPT_NOPROGRESS, 0);
 
 //    curl_easy_setopt(curlhandle, CURLOPT_VERBOSE, 1L); // if set 1, debug mode will print some low level msg
 
     // upload: 断点续传
-    for (int c = 0; (ret != CURLE_OK) && (c < tries); c++)
+    for (int c = 0; (ret != CURLE_OK) && (c < trytimes); c++)
     {
         /* are we resuming? */
         if (c)
@@ -157,20 +160,20 @@ size_t readfunc(void *ptr, size_t size, size_t nmemb, void *stream)
     }
     fclose(file);
 
-    int curl_state = 0;
-    if (ret == CURLE_OK)
-        curl_state = 1;
-    else
-    {
-        fprintf(stderr, "%s\n", curl_easy_strerror(ret));
-        curl_state = 0;
-    }
+//     int curl_state = 0;
+//     if (ret == CURLE_OK)
+//         curl_state = 1;
+//     else
+//     {
+//         fprintf(stderr, "%s\n", curl_easy_strerror(ret));
+//         curl_state = 0;
+//     }
 
     // exit curl handle
     curl_easy_cleanup(curlhandle);
     curl_global_cleanup();
 
-    return curl_state;
+   // return curl_state;
 
         return 0;
     }

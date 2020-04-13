@@ -4,9 +4,54 @@
 #include "stdafx.h"
 #include <iostream>
 #include <string>
+#include <sstream>
 #include "../../base/sqlite3/include/sqlite3.h"
 #pragma comment(lib,"../../base/sqlite3/lib/windows/32/sqlit.lib")
 using namespace std;
+
+
+bool execSQL(sqlite3*db,const string& sql)
+{
+    if(sql.length() <= 0)
+        return false;
+
+    sqlite3_stmt* pStateMent = NULL;
+    const char* pzTail = NULL;
+    try
+    {
+        int ret = sqlite3_prepare(db, sql.c_str(), sql.size()+1, &pStateMent, &pzTail);
+      //  m_error = sqlite3_errcode(db);
+        if(SQLITE_OK != ret)
+        {
+          //  m_sleLog.printLog("<execSQL> exec SQL:%s failed, result %d!\n", sql.c_str(), ret);
+            sqlite3_finalize(pStateMent);
+            return false;
+        }	
+        ret = sqlite3_step(pStateMent);
+       // m_error = sqlite3_errcode(db);
+        if(SQLITE_DONE == ret)
+        {
+            sqlite3_finalize(pStateMent);
+          //  m_sleLog.printLog("<execSQL> exec SQL:%s OK, result %d!\n", sql.c_str(), ret);
+            return true;
+        }
+        else
+        {
+           // m_sleLog.printLog("<execSQL> exec SQL:%s failed, step %d!\n", sql.c_str(), ret);
+            sqlite3_finalize(pStateMent);
+            return false;
+        }
+    }
+    catch (...)
+    {
+       // m_sleLog.printLog("<execSQL> exec SQL:%s failed, catch unknown exception!\n", sql.c_str());
+        sqlite3_finalize(pStateMent);
+
+        return false;
+    }
+
+    return false;
+}
 //创建数据库
 bool Createdb(sqlite3**pdb)
 {
@@ -122,12 +167,92 @@ bool IstableExist(sqlite3*pdb,string tablename)
 	 return false;
 
 }
+
+typedef struct changchunPuTicketFault
+{
+    char PrintPaperType;        //打印格式 0x01:二维码购票超时。0x02:购票部分失败。0x03:二维码充值超时 。0x04:现金充值成功/未确定
+    char Stationname[8];        //车站名称：双丰（2号线）
+    char DeviceID[8];           //    设备ID：02240702（设备编号：TVM02）
+    char EquipmentNo[8];        //    设备编号
+    char FaultTime[20];         //    故障时间：2019-07-16 08:00:00
+    int  Car_classes;           //    班次：44
+    char chMOrderID[32];            //订单号
+    int  BookAmount;            //    订单金额：54.00
+    int  PayStatus;             //    支付状态：成功 0x01 /未确定  0x02
+    int  TransAt;               //    交易金额：6.00
+    int  NumOfTickets;          //    交易数量：9
+    int  NumofSuccess;          //成功 4 笔
+    char CardID[128];           //卡号
+    int  NumofFail;             //失败 5 笔
+    int  TotalOfSucessAt;         //    成功交易总金额：24.00
+    int  TotalOfFailAt;         //    失败交易总金额：30.00
+    int  Faultmoney;            //    故障金额：30.00
+    int  balance;   //    交易前卡内余额
+    char jobNumber[6];             //工号：
+    unsigned char LogicalIDSet[20][30];     //出卡成功数组
+    int realcardSize;           //set集合大小
+}t_changchunPuTicketFault;
+
+bool CreatePurTicketTable(sqlite3*pdb,const char*sql,char**errmsg)
+{
+#if 0
+    stringstream cache("");
+    cache << "CREATE TABLE IF NOT  EXISTS  ChangchunPurchTickFaultData ( ";
+    cache << "PRINTPAPERTYPE INT,STATIONNAME VARCHAR,DEVICEID VARCHAR,EQUIPMENTNO VARCHAR, " ;
+    cache << "FAULTTIME VARCHAR, CARCLASSES INT,CHMORDERID VARCHAR,BOOKAMOUNT INT, ";
+    cache << "PAYSTATUS INT,TRANSAT INT, NUMOFTICKETS INT, NUMMOFSUCCESS INT, ";
+    cache << "CARDID VARCHAR,NUMOFFAAIL INT,TOTALOFSUCCESSAT INT,TOTALOFFAILAT INT, ";
+    cache << "FAULTMONEY INT,BALAANCE INT,JOBNUMBER VARCHAR,LOGICALIDSET VARCHAR,REALCARDSIZE INT )";
+#endif
+#if 0
+    t_changchunPuTicketFault *Data=new t_changchunPuTicketFault;
+    Data->PrintPaperType=0x01;
+    memset(Data,0,sizeof(t_changchunPuTicketFault));
+    char ptemp[720]={0};
+    stringstream  cache("");
+    cache << "INSERT INTO ChangchunPurchTickFaultData ( PRINTPAPERTYPE, STATIONNAME, DEVICEID, EQUIPMENTNO, " ;
+    cache << "FAULTTIME, CARCLASSES, CHMORDERID, BOOKAMOUNT, ";
+    cache << "PAYSTATUS, TRANSAT, NUMOFTICKETS, NUMMOFSUCCESS, ";
+    cache << "CARDID, NUMOFFAAIL, TOTALOFSUCCESSAT, TOTALOFFAILAT, ";
+    cache << "FAULTMONEY, BALAANCE, JOBNUMBER, LOGICALIDSET, REALCARDSIZE ) VALUES (";
+    cache << Data->PrintPaperType << ", '" << Data->Stationname << "', '" << Data->DeviceID << "', '" << Data->EquipmentNo << "', '" ;
+    cache << Data->FaultTime << "', " << Data->Car_classes << ", '" << Data->chMOrderID << "', " << Data->BookAmount << ", " ;
+    cache << Data->PayStatus << ", " << Data->TransAt << ", " << Data->NumOfTickets << ", " << Data->NumofSuccess << ", '" ;
+    cache << Data->CardID << "', " << Data->NumofFail << ", " << Data->TotalOfSucessAt << ", " << Data->TotalOfFailAt << ", ";
+    cache << Data->Faultmoney << ", " << Data->balance << ", '";
+    cache << Data->jobNumber << "','" << ptemp << "'," << Data->realcardSize << ")";
+#endif
+
+    char*p="INSERT INTO ChangchunPurchTickFaultData ( PRINTPAPERTYPE, STATIONNAME, DEVICEID, EQUIPMENTNO, FAULTTIME, CARCLASSES, CHMORDERID, BOOKAMOUNT, PAYSTATUS, TRANSAT, NUMOFTICKETS, NUMMOFSUCCESS, CARDID, NUMOFFAAIL, TOTALOFSUCCESSAT, TOTALOFFAILAT, FAULTMONEY, BALAANCE, JOBNUMBER, LOGICALIDSET, REALCARDSIZE ) VALUES (1, '', '0821070101', '01', '2019-07-26 12:33:13', 0, '0821007001190726123313000124', 2000, 1, 2000, -460486171, 0, '03104890000001471030', -460486171, 0, 2000, 0, 15810, '','',0)";
+    if (!CreateTable(pdb,p,errmsg))
+    {
+        return false;
+    }
+
+    return true;
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
 	sqlite3* pdb=NULL;
 	Createdb(&pdb);
 	char*mesg=NULL;
-	IstableExist(pdb,"student");
+  //  CreatePurTicketTable(pdb,"",&mesg);
+
+
+    //char*psql=" SELECT  FAULTTIME, DeviceID FROM ChangchunPurchTickFaultData WHERE  FAULTTIME >= '2019-06-26 00:00:00.000'";
+    stringstream cache;
+    cache.str("");
+
+    cache << "SELECT PRINTPAPERTYPE, STATIONNAME, DEVICEID, EQUIPMENTNO, " ;
+    cache << "FAULTTIME, CARCLASSES, CHMORDERID, BOOKAMOUNT, ";
+    cache << "PAYSTATUS, TRANSAT, NUMOFTICKETS, NUMMOFSUCCESS, ";
+    cache << "CARDID, NUMOFFAAIL, TOTALOFSUCCESSAT, TOTALOFFAILAT, ";
+    cache << "FAULTMONEY, BALAANCE, JOBNUMBER, LOGICALIDSET, REALCARDSIZE  ";
+    cache <<"FROM ChangchunPurchTickFaultData WHERE FAULTTIME=\"";
+    cache << "2019-07-26 12:33:13";
+    cache <<"\"";
+    SelectTable(pdb,cache.str().c_str(),&mesg);
+	/*IstableExist(pdb,"student");
 	CreateTable(pdb,"create table student (age int ,sex varchar)",&mesg);
 
 	IstableExist(pdb,"student")	 ;
@@ -141,7 +266,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	SelectTable(pdb,"select * from student",&mesg);
 	Showchange(pdb);
 	DeleteTable(pdb,"drop table student;",&mesg);
-	CloseDB(pdb);
+	CloseDB(pdb);*/
 	return 0;
 }
 

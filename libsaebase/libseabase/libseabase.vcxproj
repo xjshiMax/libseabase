@@ -130,6 +130,8 @@ copy $(ProjectDir)..\..\base\include\  $(ProjectDir)..\..\output\include\</Comma
     <ClInclude Include="..\..\base\include\xAutoLock.h" />
     <ClInclude Include="..\..\base\include\xbaseclass.h" />
     <ClInclude Include="..\..\base\include\xDemultiplexerSelect.h" />
+    <ClInclude Include="..\..\base\include\xEcharacterCode.h" />
+    <ClInclude Include="..\..\base\include\xEFile.h" />
     <ClInclude Include="..\..\base\include\xEMsgqueue.h" />
     <ClInclude Include="..\..\base\include\xEmutex.h" />
     <ClInclude Include="..\..\base\include\xEtcpclient.h" />
@@ -153,6 +155,8 @@ copy $(ProjectDir)..\..\base\include\  $(ProjectDir)..\..\output\include\</Comma
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\base\src\xDemultiplexerSelect.cpp" />
+    <ClCompile Include="..\..\base\src\xEcharacterCode.cpp" />
+    <ClCompile Include="..\..\base\src\xEFile.cpp" />
     <ClCompile Include="..\..\base\src\xEmutex.cpp" />
     <ClCompile Include="..\..\base\src\xEtcpclient.cpp" />
     <ClCompile Include="..\..\base\src\xEtcpserver.cpp" />

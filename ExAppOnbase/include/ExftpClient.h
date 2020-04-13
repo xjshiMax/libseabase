@@ -21,6 +21,7 @@ namespace SEABASE{
         const char*filename;
         FILE* stream;
     };
+    typedef int(*pcallback)(int point);
     class API_EXPORT  ExftpClient:public ftpClientBase
     {
     public:
@@ -29,7 +30,10 @@ namespace SEABASE{
        int FTP_UpLoad_Till();
        int FTP_DownLoadFile(void *deststream,string srcfile="");
        int FPT_GetProcessPoint();
+            //获取进度，以回掉函数的方式返回进度
+        virtual void FTP_SETProcessPointCallback(pcallback callback){};
     private:
         string inner_getsrcFullPath();
+        pcallback m_callback;
     };
 };
