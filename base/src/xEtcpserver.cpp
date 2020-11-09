@@ -5,6 +5,8 @@ int xEtcpListen::startlisten(const char*ip,int port)
 {
 	InitSocket();
 	m_listenFd = CreateSocket(SOCK_STREAM);
+	bool bReuseaddr=TRUE;
+	setsockopt(m_listenFd,SOL_SOCKET,SO_REUSEADDR,(const char*)&bReuseaddr,sizeof(bool));
 	if(m_listenFd==INVALID_SOCKET)
 		return -1;
 	struct sockaddr_in addrsvr;
@@ -45,4 +47,8 @@ int xtcpserver::stopTcpSvr()
 {
 	m_tcplistener.stoplisten();
 	return 0;
+}
+int xtcpserver::getListenfd()
+{
+	 return m_tcplistener.getSockfd();
 }

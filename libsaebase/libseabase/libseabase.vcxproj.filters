@@ -99,6 +99,9 @@
     <ClInclude Include="..\..\base\include\xEFile.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\base\include\xbaseLog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\base\src\xDemultiplexerSelect.cpp">
@@ -147,6 +150,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\base\src\xEcharacterCode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\src\xbaseLog.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

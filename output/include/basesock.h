@@ -241,9 +241,9 @@ struct sockaddr *from, int *fromlen)
 inline static int CloseSocket(int socket)
 {
 #ifdef WIN32
-	return closesocket(socket);
+    return closesocket(socket);
 #else
-	return close(socket);
+    return close(socket);
 #endif
 }
 //shutdown close会把读写通道全部关闭，有时我们只希望关闭一个方向，这个时候我们

@@ -225,7 +225,23 @@ namespace SEABASE
 
         return std::string(buffer);
     }
-    
+	//获取当前时间戳的字符串形式
+	//格式：YYYY-MM-DD HH:MI:SS.ms
+	string xTimeUtil::getCurrentTimeStamp()
+	{
+		struct timeval tv;
+		struct timezone tz;
+		gettimeofday(&tv , &tz);
+
+		time_t now = time(0);
+		struct tm *ts = localtime(&now);
+		if (!ts)
+			return "";
+		char buf[24] = {0};
+		sprintf(buf,"%04d-%02d-%02d %02d:%02d:%02d.%03d",
+			ts->tm_year + 1900, ts->tm_mon+1,ts->tm_mday, ts->tm_hour, ts->tm_min, ts->tm_sec,tv.tv_usec);
+		return buf;
+	}
     int32_t xTimeUtil::get_day()
     {
         time_t t = time(NULL);

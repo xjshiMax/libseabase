@@ -6,7 +6,7 @@
 #include <vector>
 using namespace std;
 using namespace SEABASE;
-
+#pragma comment(lib,"../../output/lib/windows/libseabase.lib")
 // class session:public xReceiveback
 // {
 // public:
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 {
 	xReactor reactor;
 	tcpser mytcp;
-	int listenfd = mytcp.startTcpSvr("172.28.71.53",8000);
+	int listenfd = mytcp.startTcpSvr("0.0.0.0",8008);
 
 	reactor.RegisterHandler(&mytcp,listenfd);
 	reactor.start();

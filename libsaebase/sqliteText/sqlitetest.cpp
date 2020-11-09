@@ -231,8 +231,66 @@ bool CreatePurTicketTable(sqlite3*pdb,const char*sql,char**errmsg)
 
     return true;
 }
+typedef struct
+{
+	unsigned int ud_length;
+	char ud_data[500];
+}UDDATA_SJZ, *PUDDATA_SJZ;
+struct TransRecordData
+{
+	int serial;
+	char businessDay[8];
+	UDDATA_SJZ uddata;
+};
+
+void testblobData()
+{
+	sqlite3* pdb=NULL;
+	int iret = sqlite3_open("TVMDB_TRANSDATA.s3db",&pdb);
+#if 0 //插入表测试
+	TransRecordData data;
+	memset(&data,0,sizeof(data));
+	data.serial=0x06;
+	strncpy(data.businessDay,"20200705",8);
+	data.uddata.ud_length=12;
+	data.uddata.ud_data[2]=0x09;
+	sqlite3_stmt* stat = NULL;
+	sqlite3_bind_blob(stat, 1, &data.uddata, sizeof(data.uddata), NULL);
+	//sqlite3_bind_blob(stat, 1, ffile, filesize, NULL);
+	//sqlite3_step(stat);
+	char psql[128]={0};
+	sprintf(psql,"insert into SJTTransData (BusinessDay, SerialNo, UDData) values(%s,%d,?)",string(data.businessDay).c_str(),data.serial);
+	string sql = "insert into SJTTransData (BusinessDay, SerialNo, UDData) values(?,?,?)";
+	sqlite3_prepare(pdb, psql, -1, &stat, 0);  //预编译sql语句
+	//int result = sqlite3_bind_text(stat,1,string(data.businessDay).c_str(),-1,NULL); 
+	//result= sqlite3_bind_int(stat,2,data.serial);
+	int result = sqlite3_bind_blob(stat, 1, &data.uddata, sizeof(data.uddata), NULL); //绑定第三个字段的值
+	sqlite3_step(stat);
+		sqlite3_reset(stat);
+		sqlite3_finalize(stat);
+#else //查询表测试
+	string sql="select BusinessDay, SerialNo, UDData from SJTTransData where SerialNo = 6";
+	sqlite3_stmt* stat = NULL;
+	int ret = sqlite3_prepare(pdb, sql.c_str(), sql.size()+1, &stat, 0);
+	ret = sqlite3_step(stat);
+	int serial = sqlite3_column_int(stat, 1);
+	char*pbusiness =(char*) sqlite3_column_text(stat, 0);
+	//int blob_size = sqlite3_column_bytes(stat,2)/sizeof(TransRecordData);                  //获取数组的长度
+	UDDATA_SJZ*pdata=(UDDATA_SJZ*)sqlite3_column_blob(stat,2);
+	sqlite3_reset(stat);
+	sqlite3_finalize(stat);
+	
+
+
+#endif
+// 	const void * test = sqlite3_column_blob(stat, 1);
+// 	int size = sqlite3_column_bytes(stat, 1);
+// 	changchunPuTicketFault
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
+	testblobData();
+#if 0
 	sqlite3* pdb=NULL;
 	Createdb(&pdb);
 	char*mesg=NULL;
@@ -267,6 +325,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Showchange(pdb);
 	DeleteTable(pdb,"drop table student;",&mesg);
 	CloseDB(pdb);*/
+#endif
 	return 0;
 }
 

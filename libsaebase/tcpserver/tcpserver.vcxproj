@@ -153,11 +153,6 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="tcpserver.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\libseabase\libseabase.vcxproj">
-      <Project>{83f73635-452b-49fc-8859-34e26479567a}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

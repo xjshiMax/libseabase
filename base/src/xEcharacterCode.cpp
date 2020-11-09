@@ -47,7 +47,38 @@ string CharacterCode::Gb2312ToUTF_8(char* gb2312)
     return strtemp;
 #endif
 }
-
+string CharacterCode::UTF_8ToGb2312(const char* utf8)
+{
+#ifdef WIN32
+	int len = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, NULL, 0);
+	wchar_t* wstr = new wchar_t[len+1];
+	memset(wstr, 0, len+1);
+	MultiByteToWideChar(CP_UTF8, 0, utf8, -1, wstr, len);
+	len = WideCharToMultiByte(CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL);
+	char* str = new char[len+1];
+	memset(str, 0, len+1);
+	WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, len, NULL, NULL);
+	if(wstr) delete[] wstr;
+	return str;
+#else
+	iconv_t cd;
+	char **pin = &utf8;
+	size_t src_len=strlen(utf8);
+	cd = iconv_open("gbk", "utf8");
+	if (cd == 0)
+		return "";
+	size_t dst_len=2*src_len+1;
+	char *dst_str=new char[dst_len];
+	char*out=dst_str;
+	memset(dst_str, 0, dst_len);
+	if (iconv(cd, pin, &src_len, &out, &dst_len) == -1)
+		return "";
+	iconv_close(cd);
+	string strtemp(dst_str,strlen(dst_str));
+	delete[] dst_str;
+	return strtemp;
+#endif
+}
 void CharacterCode::Ascii2BCD( char *bcd_buf, char *asc_buf,int num)
 {
     int     i, len;
@@ -82,4 +113,18 @@ void CharacterCode::Ascii2BCD( char *bcd_buf, char *asc_buf,int num)
         }
     }
     //		bcd_buf[i]=((asc_buf[2*i] & 0x0f) << 4)+(asc_buf[2*i+1] & 0x0f);
-}
+
+	//Õ­×Ö·û×ª¿í×Ö·û
+	wchar_t* CharacterCode::AnsiToUnicode(const char* szStr)
+{
+		int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, NULL, 0 );
+
+		if (nLen == 0)
+		{
+			return NULL;
+		}
+		wchar_t* pResult = new wchar_t[nLen];
+		MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, pResult, nLen );
+		return pResult;
+
+	}

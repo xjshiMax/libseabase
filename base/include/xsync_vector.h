@@ -36,7 +36,7 @@ namespace SEABASE
 			m_psem->signal();
 			return 0;
 		}
-		int32_t get(ElemType&elem,int millisecond)
+		int32_t get(ElemType&elem,int millisecond= INFINITE)
 		{
 			int32_t ret = m_psem->wait(millisecond);
 			if(0 == ret)

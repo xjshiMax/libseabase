@@ -197,6 +197,9 @@ namespace SEABASE{
         **/
 		static int32_t gettimeofday(struct ::timeval *tv, struct timezone *tz);
 
+		//获取当前时间戳的字符串形式
+		//格式：YYYY-MM-DD HH:MI:SS.ms
+		static string getCurrentTimeStamp();
 #ifdef WIN32
     private:
 		/*__declspec(thread)*/ static FILETIME _ft;             /**< 标准时间    */

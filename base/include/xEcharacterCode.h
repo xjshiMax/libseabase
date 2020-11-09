@@ -20,11 +20,14 @@ namespace SEABASE
     public:
         static int GetCharacterTpye();
         static string Gb2312ToUTF_8(char* gb2312);
+		static string UTF_8ToGb2312(const char* utf8);
         static bool Ascii2utf8();
         static bool Utf8ToAscii();
         static void Ascii2BCD( char *bcd_buf, char *asc_buf,int num);
 
         static bool Hex2Ascii();
+
+		static wchar_t* CharacterCode::AnsiToUnicode(const char* szStr);
     };
 }
 

@@ -310,7 +310,58 @@ namespace SEABASE {
         dest |= d;
         return true;
     }
-
+	//////////////////////////////////////////////////////////////////////////
+	//将字符串格式化成16进制显示用字符串
+	//如"123"-> "31 32 33 "
+	//@input:输入字符串
+	//@length:输入字符串长度
+	//@output:输出字符串
+	//@bytes_per_line:每行输出的字符数，0代表不换行
+	void xStringUtil::formatHexString(const char* input, const size_t& length, string& output, const size_t& bytes_per_line)
+	{
+		stringstream cache;
+		unsigned char high(0), low(0);
+		bool needNewLine = (0 != bytes_per_line);
+		size_t count(0);
+		for (size_t offset = 0; offset < length; offset++)
+		{
+			high = ((unsigned char)input[offset]) >> 4;					
+			low = ((unsigned char)input[offset])& 0x0F;
+			if (high > 9)
+			{
+				high += 0x37;
+			}
+			else{
+				high += 0x30;
+			}
+			if (low > 9)
+			{
+				low += 0x37;
+			}
+			else{
+				low += 0x30;
+			}
+			cache << high << low << " ";
+			count++;
+			if (needNewLine)
+			{
+				if (count == bytes_per_line)
+				{
+					cache << std::endl;
+					count = 0;
+				}
+			}
+		}
+		if (needNewLine)
+		{
+			//如果不是刚好n行，则需要补回车
+			if (0 != (length % bytes_per_line))
+			{
+				cache << std::endl;
+			}
+		}
+		output = cache.str();
+	}
     int32_t xStringUtil::xstrncpy(char* dest, const char* src, int32_t n) {
         if (NULL == dest || NULL == src) {
             return -1;

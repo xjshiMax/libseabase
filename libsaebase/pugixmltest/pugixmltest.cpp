@@ -143,7 +143,10 @@ void loadxml()
 int main()
 {
 	//WriteData();
-	Creategata("testgate","58.248.254.116:5060","58.248.254.116:5060","60","02022205303","12344321","true");
+	//Creategata("testgate","58.248.254.116:5060","58.248.254.116:5060","60","02022205303","12344321","true");
+	string temp="aaa";
+	char pa[32]={0};
+	strncpy(pa,temp.c_str(),32);
 	return 0;
 }
 
