@@ -112,6 +112,7 @@ void CharacterCode::Ascii2BCD( char *bcd_buf, char *asc_buf,int num)
             bcd_buf[i] += (asc_buf[i * 2 + 1] - 'a' + 10)  ;
         }
     }
+}
     //		bcd_buf[i]=((asc_buf[2*i] & 0x0f) << 4)+(asc_buf[2*i+1] & 0x0f);
 
 	//Õ­×Ö·û×ª¿í×Ö·û

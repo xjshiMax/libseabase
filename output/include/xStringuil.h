@@ -242,7 +242,6 @@ namespace SEABASE {
          * @return Ëæ»úÊý×Ö·û´®
          */
 		static void xStringUtil::formatHexString(const char* input, const size_t& length, string& output, const size_t& bytes_per_line = 0);
-
         static std::string rand_string();
 
         /**
