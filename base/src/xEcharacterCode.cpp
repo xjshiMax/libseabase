@@ -6,6 +6,8 @@
 #include<dlfcn.h>
 #include <iconv.h>
 #endif
+#include<string.h>
+using namespace std;
 
 using namespace SEABASE;
 
@@ -62,7 +64,7 @@ string CharacterCode::UTF_8ToGb2312(const char* utf8)
 	return str;
 #else
 	iconv_t cd;
-	char **pin = &utf8;
+	char **pin = (char**)&utf8;
 	size_t src_len=strlen(utf8);
 	cd = iconv_open("gbk", "utf8");
 	if (cd == 0)
@@ -118,6 +120,7 @@ void CharacterCode::Ascii2BCD( char *bcd_buf, char *asc_buf,int num)
 	//Õ­×Ö·û×ª¿í×Ö·û
 	wchar_t* CharacterCode::AnsiToUnicode(const char* szStr)
 {
+#ifdef WIN32
 		int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, NULL, 0 );
 
 		if (nLen == 0)
@@ -127,5 +130,8 @@ void CharacterCode::Ascii2BCD( char *bcd_buf, char *asc_buf,int num)
 		wchar_t* pResult = new wchar_t[nLen];
 		MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, pResult, nLen );
 		return pResult;
+#else
+#endif
+	return NULL;
 
 	}

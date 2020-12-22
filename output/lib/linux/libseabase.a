@@ -1,10 +1,10 @@
 !<arch>
-//                                              70        `
+//                                              90        `
+xEcharacterCode.cpp/
 xDemultiplexerSelect.cpp/
 xEventDemultiplexer.cpp/
 xEthreadpool.cpp/
-
-xtimeheap.cpp/  1559887525  0     0     100644  2290      `
+xtimeheap.cpp/  0           0     0     644     2406      `
 #include "xtimeheap.h"
 using namespace SEABASE;
 void xtime_heap::percolate_down(int hole)
@@ -121,333 +121,473 @@ void xtime_heap::tick()
 		pop_timer();
 		temp=array[0];
 	}
-}xTimeuil.cpp/   1559887525  0     0     100644  8974      `
-#include "xTimeuil.h"
+}xEFile.cpp/     0           0     0     644     6993      `
+//2019-7-31 xjshi
+#include "../include/xEFile.h"
+using namespace SEABASE;
+#include <fstream>
 #include <iostream>
-#include "xStringuil.h"
-namespace SEABASE
-{
-
-    static struct tm* localtime_r(const time_t* timep, struct tm* result = NULL) {
 #ifdef WIN32
-        (void)result;
-        return localtime(timep);
+
+#include <direct.h>
+#include <io.h>
 #else
-        return ::localtime_r(timep, result);
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <dirent.h>
 #endif
-    }
-
-#ifdef _WIN32
-    //gettimeofday 引用自http://suacommunity.com/dictionary/gettimeofday-entry.php
-    FILETIME xTimeUtil::_ft = {0};
-	LARGE_INTEGER xTimeUtil::_pform = {0};
-#endif
-	  
-    int32_t xTimeUtil::gettimeofday(struct ::timeval *tv, struct timezone *tz)
-    {
-#ifndef _WIN32
-        return ::gettimeofday(tv,tz);
+bool xEFile::MakePath(const string& path)
+{
+#ifdef WIN32
+     return (0 == _mkdir(path.c_str()));
 #else
-        FILETIME ft;
-
-        unsigned __int64 tmpres = 0;
-        unsigned __int64 tmpres2 = 0;
-        static int tzflag = 0;
-        LARGE_INTEGER pform={0};
-        QueryPerformanceCounter(&pform);
-
-        if (NULL != tv)
-        {
-            GetSystemTimeAsFileTime(&ft);
-            if(ft.dwLowDateTime == _ft.dwLowDateTime && ft.dwHighDateTime == _ft.dwHighDateTime)
-            {
-                //时间相等时，计算时间偏移
-                LARGE_INTEGER pfreq = {0};
-                QueryPerformanceFrequency(&pfreq);
-                tmpres2 = ((pform.QuadPart - _pform.QuadPart) * 1000000UL)/pfreq.QuadPart;
-            }
-            else
-            {
-                //时间不等时，更新标准时间
-                xTimeUtil::_ft = ft;
-                QueryPerformanceCounter(&_pform);
-            }
-
-            tmpres |= ft.dwHighDateTime;
-            tmpres <<= 32;
-            tmpres |= ft.dwLowDateTime;
-
-            tmpres /= 10;
-            tmpres -= DELTA_EPOCH_IN_MICROSECS;
-			tmpres += tmpres2;	//增加修正偏移
-
-
-            tv->tv_sec = (long)(tmpres / 1000000UL);
-            tv->tv_usec = (long)(tmpres % 1000000UL);
-        }
-
-        if (NULL != tz)
-        {
-            if (!tzflag)
-            {
-                _tzset();
-                tzflag++;
-            }
-
-            tz->tz_minuteswest = _timezone / 60;
-            tz->tz_dsttime = _daylight;
-        }
-
-        return 0;
+     return (0==mkdir(path.c_str(),0777));
 #endif
-    }
-
-    uint64_t xTimeUtil::get_timestamp_s() {
-        struct ::timeval tv = {0, 0};
-		gettimeofday(&tv, NULL);
-        return tv.tv_sec;
-    }
-
-    uint64_t xTimeUtil::get_timestamp_ms() {
-        struct ::timeval tv = {0, 0};
-        gettimeofday(&tv, NULL);
-        return (uint64_t)tv.tv_sec * 1000 + tv.tv_usec / 1000;
-    }
-
-    uint64_t xTimeUtil::get_timestamp_us() {
-        struct ::timeval tv = {0, 0};
-        gettimeofday(&tv, NULL);
-        return (uint64_t)tv.tv_sec * 1000000 + tv.tv_usec;
-    }
-
-    void xTimeUtil::safe_sleep_s(uint32_t second) {
-#ifdef _WIN32
-        return xTimeUtil::safe_sleep_ms(second * 1000);
-#else
-        struct timespec interval, remainder;
-        int32_t ret;
-
-        interval.tv_sec = second;
-        interval.tv_nsec = 0;
-
-        ret = nanosleep(&interval, &remainder);
-        if (-1 == ret) {
-            while (EINTR == errno && -1 == ret) {
-                ret = nanosleep(&remainder, &remainder);
-            }
-        }
-#endif
-    }
-
-    void xTimeUtil::safe_sleep_ms(uint32_t millisecond) {
-#ifdef _WIN32
-        ::Sleep(millisecond);
-#else
-        struct timespec interval, remainder;
-        int32_t ret;
-
-        interval.tv_sec = millisecond / 1000U;
-        interval.tv_nsec = (uint64_t)millisecond % 1000UL * 1000UL * 1000UL;
-
-        ret = nanosleep(&interval, &remainder);
-        if (-1 == ret) {
-            while (EINTR == errno && -1 == ret) {
-                ret = nanosleep(&remainder, &remainder);
-            }
-        }
-#endif
-    }
-
-    std::string xTimeUtil::format_datetime_str(uint64_t millisecond) {
-        time_t time = (time_t)(millisecond / 1000);
-        struct tm t;
-        struct tm *pt = NULL;
-        char buffer[24] = {0};
-
-        pt = SEABASE::localtime_r(&time, &t);
-        if(NULL != pt)
-        {
-            t = *pt;
-            snprintf(buffer, 24, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
-                t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, (int32_t)(millisecond % 1000));
-        }
-        return std::string(buffer);
-    }
-
-#ifndef _WIN32
-    int32_t xTimeUtil::get_abs_timespec(struct timespec* ts, int32_t millisecond) {
-        struct timeval tv;
-        int32_t ret;
-
-        if (NULL == ts) {
-            return EINVAL;
-        }
-
-        ret = gettimeofday(&tv, NULL);
-        if (0 != ret) {
-            return ret;
-        }
-
-        ts->tv_sec = tv.tv_sec;
-        ts->tv_nsec = tv.tv_usec * 1000UL;
-
-        ts->tv_sec += millisecond / 1000UL;
-        ts->tv_nsec += millisecond % 1000UL * 1000000UL;
-
-        ts->tv_sec += ts->tv_nsec/(1000UL * 1000UL *1000UL);
-        ts->tv_nsec %= (1000UL * 1000UL *1000UL);
-
-        return 0;
-    }
-#endif
-
-    int32_t xTimeUtil::strftimeval(char* buffer, int32_t buflen, const struct timeval* tv) {
-        if (NULL == buffer || NULL == tv) {
-            return -1;
-        }
-
-        time_t time = tv->tv_sec;
-        struct tm t;
-        struct tm *pt = NULL;
-
-        pt = SEABASE::localtime_r(&time, &t);
-        if(NULL == pt)
-        {
-            return -1;
-        }
-        t = *pt;
-        return snprintf(buffer, buflen, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
-                t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, (int32_t)tv->tv_usec / 1000);   
-    }
-
-    std::string xTimeUtil::get_date() {
-        time_t t = time(NULL);
-        struct tm result;
-        struct tm *presult = NULL;
-        char buffer[20] = {0};
-        presult = SEABASE::localtime_r(&t, &result);
-        if(NULL != presult)
-        {
-            result = *presult;
-            strftime(buffer, 20, "%Y%m%d", &result);
-        }
-
-        return std::string(buffer);
-    }
-
-    std::string xTimeUtil::get_time() {
-        time_t t = time(NULL);
-        struct tm result;
-        struct tm *presult = NULL;
-        char buffer[20] = {0};
-        presult = SEABASE::localtime_r(&t, &result);
-        if(NULL != presult)
-        {
-            result = *presult;
-            strftime(buffer, 20, "%H%M%S", &result);
-        }
-
-        return std::string(buffer);
-    }
-    
-    int32_t xTimeUtil::get_day()
-    {
-        time_t t = time(NULL);
-        struct tm result;
-        struct tm *presult = NULL;
-        presult = SEABASE::localtime_r(&t, &result);
-        if(NULL == presult)
-        {
-            return -1;
-        }
-        result = *presult;
-        return result.tm_wday;
-    }
-
-    int32_t xTimeUtil::get_day( time_t time )
-    {
-        struct tm result;
-        struct tm *presult = NULL;
-        presult = SEABASE::localtime_r(&time, &result);
-        if(NULL == presult)
-        {
-            return -1;
-        }
-        result = *presult;
-        return result.tm_wday;
-    }
-
-    std::string xTimeUtil::format_time(const char * fmt)
-    {
-        //获取时间
-        struct ::timeval tv = {0, 0};
-        gettimeofday(&tv, NULL);
-        
-        return format_time(&tv, fmt);
-    }
-    
-    std::string xTimeUtil::format_time(time_t time, const char * fmt)
-    {
-        struct ::timeval tv = {0, 0};
-        tv.tv_sec = static_cast <long>(time);
-
-        return format_time(&tv, fmt);
-    }
-
-    std::string xTimeUtil::format_time(const struct timeval* tv, const char * fmt)
-    {
-        struct tm result;
-        struct tm  *presult = NULL;
-        time_t t = tv->tv_sec;
-        char buffer[50] = {0};
-        char tmp[8];
-        if(NULL == fmt)
-        {
-            //格式化当前时间
-            presult = SEABASE::localtime_r(&t, &result);
-            if(NULL != presult)
-            {
-                result = *presult;
-                strftime(buffer, sizeof(buffer), "%Y%m%d-%H:%M:%S", &result);
-            }
-        }
-        else
-        {
-            std::string str_fmt(fmt);
-            std::string str_tmp;
-            if(std::string::npos != str_fmt.find("[m]"))
-            {
-                //替换毫秒时间
-                snprintf(tmp,8,"%03d", (int)(tv->tv_usec / 1000) );
-                str_tmp.assign(tmp);
-                str_fmt = xStringUtil::replace_string(str_fmt, "[m]", str_tmp);
-            }
-            if(std::string::npos != str_fmt.find("[u]"))
-            {
-                //替换微秒时间
-                snprintf(tmp,8,"%06d", (int)(tv->tv_usec) );
-                str_tmp.assign(tmp);
-                str_fmt = xStringUtil::replace_string(str_fmt, "[u]", str_tmp);
-            }
-            if(std::string::npos != str_fmt.find("[U]"))
-            {
-                //替换微秒时间
-                snprintf(tmp,8,"%03d", (int)(tv->tv_usec % 1000) );
-                str_tmp.assign(tmp);
-                str_fmt = xStringUtil::replace_string(str_fmt, "[U]", str_tmp);
-            }
-            presult = SEABASE::localtime_r(&t, &result);
-            if(NULL != presult)
-            {
-                result = *presult;
-                strftime(buffer, sizeof(buffer), str_fmt.c_str(), &result);
-            }
-        }
-        return std::string(buffer);
-    }
 }
 
-/0              1559887525  0     0     100644  1708      `
+        //复制文件
+        //参数：sourceFile 源文件
+        //      destFle    目标文件名称
+        //     overwrite   是否覆盖
+bool xEFile::Copy(const string& sourceFile, const string& destFile, bool overwrite )
+{
+#ifdef WIN32
+    if (!canRead(sourceFile))
+    {
+        //源文件不存在或不可读
+        return false;
+    }
+    if (overwrite && Exists(destFile))
+    {
+        //目标文件存在
+        if (!canWrite(destFile))
+        {
+            //不可写
+            return false;
+        }
+    }
+    //读文件流
+    fstream readStream;
+    //写文件流
+    fstream writeStream;
+    readStream.open(sourceFile.c_str(), ios_base::in|ios_base::binary);
+    writeStream.open(destFile.c_str(), ios_base::out|ios_base::binary);
+    char currentChar = 0;
+    while (!readStream.eof())
+    {
+        readStream.get(currentChar);
+        if (!readStream.eof())
+        {
+            writeStream << currentChar;
+        }					
+    }
+    readStream.close();
+    writeStream.close();
+    return true;
+#else 
+    if (!canRead(sourceFile))
+    {
+        //源文件不存在或不可读
+        return false;
+    }
+    if (overwrite && Exists(destFile))
+    {
+        //目标文件存在
+        if (!canWrite(destFile))
+        {
+            //不可写
+            return false;
+        }
+    }
+    //读文件流
+    fstream readStream;
+    //写文件流
+    fstream writeStream;
+    readStream.open(sourceFile.c_str(), ios_base::in|ios_base::binary);
+    writeStream.open(destFile.c_str(), ios_base::out|ios_base::binary);
+    char currentChar = 0;
+    while (!readStream.eof())
+    {
+        readStream.get(currentChar);
+        if (!readStream.eof())
+        {
+            writeStream << currentChar;
+        }					
+    }
+    readStream.close();
+    writeStream.close();
+    return true;
+#endif
+}
+       
+bool xEFile::Exists(const string& filename)
+{
+#ifdef WIN32
+            return (0 == _access(filename.c_str(), 0));
+#else
+            return (0 == access(filename.c_str(), 0));
+#endif
+}
+
+bool xEFile::Remove(const string& filename)
+{
+    if (!Exists(filename))
+    {
+        //不存在
+        return false;
+    }
+#ifdef WIN32
+    return (0 == _unlink(filename.c_str()));
+#else
+    return (0 == unlink(filename.c_str()));
+#endif
+}
+
+bool xEFile::move(const string& sourceFile, const string& destFile)
+{
+#ifdef WIN32
+    return (0 == rename(sourceFile.c_str(), destFile.c_str()));
+#else
+//仅可移动文件
+    return (0 == rename(sourceFile.c_str(), destFile.c_str()));
+#endif
+}
+
+bool xEFile::canRead(const string& path)
+{
+    if (!Exists(path))
+    {
+        //文件不存在
+        return false;
+    }
+#ifdef WIN32
+    if (0 == _access(path.c_str(), 4))
+    {
+        //read only
+        return true;
+    }
+    if (0 == _access(path.c_str(), 6))
+    {
+        //read write
+        return true;
+    }
+#else
+    if (0 == access(path.c_str(), 4))
+    {
+        //read only
+        return true;
+    }
+    if (0 == access(path.c_str(), 6))
+    {
+        //read write
+        return true;
+    }
+#endif
+    return false;
+}
+
+
+bool xEFile::canWrite(const string& path)
+{
+    if (!Exists(path))
+    {
+        //文件不存在
+        return false;
+    }
+#ifdef WIN32
+    if (0 == _access(path.c_str(), 2))
+    {
+        //read only
+        return true;
+    }
+    if (0 == _access(path.c_str(), 6))
+    {
+        //read write
+        return true;
+    }
+#else
+    if (0 == access(path.c_str(), 2))
+    {
+        //read only
+        return true;
+    }
+    if (0 == access(path.c_str(), 6))
+    {
+        //read write
+        return true;
+    }
+#endif
+    return false;
+}
+
+        //获取文件大小
+        //参数：path  文件路径
+        //返回值： 返回大小，为0则不存在
+int xEFile::GetFileSize(const string &path)
+{
+    if (!Exists(path))
+    {
+        return 0;
+    }
+#if 0
+#ifdef WIN32
+    struct _stat status;
+    if (0 == _stat(path.c_str(), &status))
+    {
+        //获取成功
+        return status.st_size;
+    }
+    else{
+        //获取失败
+        return 0;
+    }
+#else
+
+    struct stat status;
+    if (0 == stat(path.c_str(), &status))
+    {
+        //获取成功
+        return status.st_size;
+    }
+    else{
+        //获取失败
+        return 0;
+    }
+#endif
+
+#endif
+    return 0;
+}
+
+        //搜索符合条件的文件
+        //参数： contidion  搜索条件 如"c:/windows/*.*"
+        //       files     符合条件的文件名集合，不带路径
+        //返回值：如果存在符合条件的文件，返回ture,否则返回false
+bool xEFile::search(const string& condition, vector< string >& files)
+{
+#ifdef WIN32
+    struct _finddata_t file_data;
+    intptr_t hFile;
+    hFile = _findfirst(condition.c_str(), &file_data);
+    if ( -1L == hFile)
+    {
+        //没有匹配文件
+        return false;
+    }
+    do{
+        //遍历所有文件
+        files.push_back(file_data.name);
+    }
+    while (0 == _findnext(hFile, &file_data));
+    _findclose(hFile);
+    if (0 != files.size())
+    {
+        return true;
+    }
+    else{
+        return false;
+    }
+#else
+    struct dirent *dp;
+    DIR *dfd = NULL;
+
+    //最后的‘/’
+    const int pos = condition.find_last_of('/')+1;
+    //目录
+    const string dir = condition.substr(0, pos);
+    //文件
+    const string file = condition.substr(pos, condition.size());
+
+    //文件类型
+    string fileType("");
+    //包含“.”
+    if(string::npos != file.find('.'))
+    {
+        fileType = condition.substr(file.find_last_of('.')+1, file.size());
+    }
+    else
+    {
+        fileType = file;
+    }
+
+    //打开目录
+    if((dfd = opendir(dir.c_str())) == NULL)
+    {
+        return false;
+    }
+    //轮询目录下的文件
+    for(dp = readdir(dfd); NULL!=dp; dp = readdir(dfd))
+    {
+        if(dp->d_type == 4 || dp->d_type == 10)// dir/link file
+        {
+            //		continue;
+            string fileName(dp->d_name);
+            files.push_back(fileName);
+        }
+        else if(dp->d_type == 8)//file
+        {
+            string fileName(dp->d_name);
+            if((0 == file.compare("*")) || (0 == file.compare("*.*")))
+            {
+                //不带路径的文件名
+                files.push_back(fileName);
+            }
+            else if(string::npos != fileName.find(fileType))
+            {
+                //不带路径的文件名
+                files.push_back(fileName);
+            }
+        }
+
+    }
+    closedir(dfd);
+    return true;
+//}
+#endif
+    return true;
+}
+/0              0           0     0     644     3801      `
+#include "../include/xEcharacterCode.h"
+#ifdef WIN32
+#include <Windows.h>
+#include <tchar.h>
+#else
+#include<dlfcn.h>
+#include <iconv.h>
+#endif
+#include<string.h>
+using namespace std;
+
+using namespace SEABASE;
+
+int CharacterCode::GetCharacterTpye()
+{
+    return 0;
+}
+string CharacterCode::Gb2312ToUTF_8(char* gb2312)
+{
+#ifdef WIN32
+    int len=MultiByteToWideChar(CP_ACP,0,gb2312,-1,NULL,0);
+    wchar_t*wstr=new wchar_t[len+1];
+    memset(wstr,0,len+1);
+    MultiByteToWideChar(CP_ACP,0,gb2312,-1,wstr,len);
+    len=WideCharToMultiByte(CP_UTF8,0,wstr,-1,NULL,0,NULL,NULL);
+    char*str=new char[len+1];
+    memset(str,0,len+1);
+    WideCharToMultiByte(CP_UTF8,0,wstr,-1,str,len,NULL,NULL);
+    if(wstr)delete[] wstr;
+    string strtemp(str,strlen(str));
+    if(str) delete[] str;
+    return strtemp;
+#else
+    iconv_t cd;
+    char **pin = &gb2312;
+    size_t src_len=strlen(gb2312);
+    cd = iconv_open("utf8", "gbk");
+    if (cd == 0)
+        return "";
+    size_t dst_len=2*src_len+1;
+    char *dst_str=new char[dst_len];
+    char*out=dst_str;
+    memset(dst_str, 0, dst_len);
+    if (iconv(cd, pin, &src_len, &out, &dst_len) == -1)
+        return "";
+    iconv_close(cd);
+    string strtemp(dst_str,strlen(dst_str));
+    delete[] dst_str;
+    return strtemp;
+#endif
+}
+string CharacterCode::UTF_8ToGb2312(const char* utf8)
+{
+#ifdef WIN32
+	int len = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, NULL, 0);
+	wchar_t* wstr = new wchar_t[len+1];
+	memset(wstr, 0, len+1);
+	MultiByteToWideChar(CP_UTF8, 0, utf8, -1, wstr, len);
+	len = WideCharToMultiByte(CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL);
+	char* str = new char[len+1];
+	memset(str, 0, len+1);
+	WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, len, NULL, NULL);
+	if(wstr) delete[] wstr;
+	return str;
+#else
+	iconv_t cd;
+	char **pin = (char**)&utf8;
+	size_t src_len=strlen(utf8);
+	cd = iconv_open("gbk", "utf8");
+	if (cd == 0)
+		return "";
+	size_t dst_len=2*src_len+1;
+	char *dst_str=new char[dst_len];
+	char*out=dst_str;
+	memset(dst_str, 0, dst_len);
+	if (iconv(cd, pin, &src_len, &out, &dst_len) == -1)
+		return "";
+	iconv_close(cd);
+	string strtemp(dst_str,strlen(dst_str));
+	delete[] dst_str;
+	return strtemp;
+#endif
+}
+void CharacterCode::Ascii2BCD( char *bcd_buf, char *asc_buf,int num)
+{
+    int     i, len;
+
+    len = num / 2 ;
+    for ( i=0; i<len; i++)
+    {
+        if (asc_buf[i * 2 + 0] >= '0' && asc_buf[i * 2 + 0] <= '9')
+        {
+            bcd_buf[i] = (asc_buf[i * 2 + 0] - 48) * 16 ;
+        }
+        if (asc_buf[i * 2 + 0] >= 'A' && asc_buf[i * 2 + 0] <= 'Z')
+        {
+            bcd_buf[i] = (asc_buf[i * 2 + 0] - 'A' + 10) * 16 ;
+        }
+        if (asc_buf[i * 2 + 0] >= 'a' && asc_buf[i * 2 + 0] <= 'z')
+        {
+            bcd_buf[i] = (asc_buf[i * 2 + 0] - 'a' + 10) * 16 ;
+        }
+
+        if (asc_buf[i * 2 + 1] >= '0' && asc_buf[i * 2 + 1] <= '9')
+        {
+            bcd_buf[i] += (asc_buf[i * 2 + 1] - 48)  ;
+        }
+        if (asc_buf[i * 2 + 1] >= 'A' && asc_buf[i * 2 + 1] <= 'Z')
+        {
+            bcd_buf[i] += (asc_buf[i * 2 + 1] - 'A' + 10)  ;
+        }
+        if (asc_buf[i * 2 + 1] >= 'a' && asc_buf[i * 2 + 1] <= 'z')
+        {
+            bcd_buf[i] += (asc_buf[i * 2 + 1] - 'a' + 10)  ;
+        }
+    }
+}
+    //		bcd_buf[i]=((asc_buf[2*i] & 0x0f) << 4)+(asc_buf[2*i+1] & 0x0f);
+
+	//窄字符转宽字符
+	wchar_t* CharacterCode::AnsiToUnicode(const char* szStr)
+{
+#ifdef WIN32
+		int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, NULL, 0 );
+
+		if (nLen == 0)
+		{
+			return NULL;
+		}
+		wchar_t* pResult = new wchar_t[nLen];
+		MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, pResult, nLen );
+		return pResult;
+#else
+#endif
+	return NULL;
+
+	}
+
+/21             0           0     0     644     1791      `
 //xjshi 2019/3/13
 //重构hpp
 #include"xDemultiplexerSelect.h"
@@ -531,7 +671,8 @@ int xSelectDemultiplexer::UnrequestEvent(SEABASE::handle_t handle)
 	return 0;
 }
 
-#endifxStringuil.cpp/ 1559887525  0     0     100644  8879      `
+#endif
+xStringuil.cpp/ 0           0     0     644     10358     `
 /***********************************************************************
   * Copyright (c) 2012, Baidu Inc. All rights reserved.
   * 
@@ -844,7 +985,58 @@ namespace SEABASE {
         dest |= d;
         return true;
     }
-
+	//////////////////////////////////////////////////////////////////////////
+	//将字符串格式化成16进制显示用字符串
+	//如"123"-> "31 32 33 "
+	//@input:输入字符串
+	//@length:输入字符串长度
+	//@output:输出字符串
+	//@bytes_per_line:每行输出的字符数，0代表不换行
+	void xStringUtil::formatHexString(const char* input, const size_t& length, string& output, const size_t& bytes_per_line)
+	{
+		stringstream cache;
+		unsigned char high(0), low(0);
+		bool needNewLine = (0 != bytes_per_line);
+		size_t count(0);
+		for (size_t offset = 0; offset < length; offset++)
+		{
+			high = ((unsigned char)input[offset]) >> 4;					
+			low = ((unsigned char)input[offset])& 0x0F;
+			if (high > 9)
+			{
+				high += 0x37;
+			}
+			else{
+				high += 0x30;
+			}
+			if (low > 9)
+			{
+				low += 0x37;
+			}
+			else{
+				low += 0x30;
+			}
+			cache << high << low << " ";
+			count++;
+			if (needNewLine)
+			{
+				if (count == bytes_per_line)
+				{
+					cache << std::endl;
+					count = 0;
+				}
+			}
+		}
+		if (needNewLine)
+		{
+			//如果不是刚好n行，则需要补回车
+			if (0 != (length % bytes_per_line))
+			{
+				cache << std::endl;
+			}
+		}
+		output = cache.str();
+	}
     int32_t xStringUtil::xstrncpy(char* dest, const char* src, int32_t n) {
         if (NULL == dest || NULL == src) {
             return -1;
@@ -879,8 +1071,7 @@ namespace SEABASE {
 	xEmutex xStringUtil::stMutex;
 }
 
-
-xthreadPool.cpp/1559887525  0     0     100644  2463      `
+xthreadPool.cpp/0           0     0     644     2551      `
 #include "xthreadPool.h"
 using namespace SEABASE;
 bool xsimpleThreadPool::shutdown=false;
@@ -970,7 +1161,7 @@ void xthreadPool::joinAllThread()
 	}
 
 }
-xEtcpserver.cpp/1559887525  0     0     100644  940       `
+xEtcpserver.cpp/0           0     0     644     1173      `
 #include "xEtcpserver.h"
 using namespace SEABASE;
 
@@ -978,6 +1169,8 @@ int xEtcpListen::startlisten(const char*ip,int port)
 {
 	InitSocket();
 	m_listenFd = CreateSocket(SOCK_STREAM);
+	bool bReuseaddr=true;
+	setsockopt(m_listenFd,SOL_SOCKET,SO_REUSEADDR,(const char*)&bReuseaddr,sizeof(bool));
 	if(m_listenFd==INVALID_SOCKET)
 		return -1;
 	struct sockaddr_in addrsvr;
@@ -1018,7 +1211,12 @@ int xtcpserver::stopTcpSvr()
 {
 	m_tcplistener.stoplisten();
 	return 0;
-}xNetdata.cpp/   1559887525  0     0     100644  1759      `
+}
+int xtcpserver::getListenfd()
+{
+	 return m_tcplistener.getSockfd();
+}
+xNetdata.cpp/   0           0     0     644     1826      `
 #include "xNetdata.h"
 using namespace SEABASE;
 
@@ -1086,8 +1284,500 @@ void Eventcallback::DataCallback(int sockfd,xEventDemultiplexer*Demultiplexer,vo
 void Eventcallback::ErrCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg)
 {
 
+}xbaseLog.cpp/   0           0     0     644     10139     `
+///////////////////////////////////////////////////////////////////////
+/* 文件名： xbaseLog.cpp
+ 文件作用：		
+    实现配置文件数据的读取功能、存放全局变量和全局静态方法。   
+//-------------------------------------------------------------------
+ 修改历史记录：
+    修改时间      2020-11-9
+    修改人        xjshi
+    修改内容概要  
+*/
+///////////////////////////////////////////////////////////////////////
+
+//#include "stdafx.h"
+
+#include <sstream>
+#include "xbaseLog.h"
+
+
+#define SLASH "/"
+
+namespace SEABASE{
+
+
+	xbaseLog::xbaseLog()
+	{
+		m_logDate = "";
+		m_logPath = "../log/";
+		m_logName = "log";
+		m_logFile = NULL;
+        m_loglevel = LOG_DEBUG;
+        m_loglevelstr = "DEBUG";
+	}
+	
+	xbaseLog::xbaseLog(string logname)
+	{
+		m_logDate = "";
+		m_logPath = "../log/";
+		m_logName = logname;
+		m_logFile = NULL;	
+        loglevel=LOG_DEBUG;
+	}
+
+	xbaseLog::~xbaseLog()
+	{
+	   closelogFile();
+	}
+
+	void xbaseLog::setLogName(string strLogName)
+	{
+		m_logName = strLogName;
+	}
+     void xbaseLog::setLoglevel(int level)
+     {
+         switch(level)
+         {
+         case LOG_ERROR:
+             {
+                 m_loglevel = LOG_ERROR;
+                 m_loglevelstr = "ERROR";
+             }
+             break;
+         case LOG_INFO:
+             {
+                 m_loglevel = LOG_INFO;
+                 m_loglevelstr = "INFO";
+             }
+             break;
+         case LOG_DEBUG:
+             {
+                 m_loglevel = LOG_DEBUG;
+                 m_loglevelstr = "DEBUG";
+             }
+             break;
+         }
+     }
+	void xbaseLog::setLogModule(string strLogName)
+	{
+		m_logName = strLogName;
+	}
+
+	void xbaseLog::setLogPath(string strLogPath)
+	{
+		m_logPath = strLogPath;
+
+		if (xEFile::Exists(m_logPath))
+		{
+			xEFile::MakePath(m_logPath);
+		}
+	}
+		////////////////////////////////////////////////////////////////
+	// 函数名：  openLogFile()
+	// 说明：   打开日志记录文件
+	// 输入参数：无
+	// 返回值：  无
+	//-------------------------------------------------------------
+	// 修改历史记录：
+	//    修改时间      2012-03-16 
+	//    修改人        zlc
+	//    修改内容概要
+	////////////////////////////////////////////////////////////////
+	bool xbaseLog::openLogFile()
+	{
+		if(NULL != m_logFile)
+			fclose(m_logFile);
+
+		string strDate = xTimeUtil::get_date();
+
+		if (!xEFile::Exists(m_logPath))
+		{
+			xEFile::MakePath(m_logPath);
+		}
+
+		string logDate = xTimeUtil::get_date();
+		m_logDate = logDate;
+
+		string dateDir = m_logPath + logDate + SLASH;
+		if(!xEFile::Exists(dateDir))
+		{
+			xEFile::MakePath(dateDir);
+		}
+
+		if(!xEFile::Exists(m_logPath +  strDate + SLASH))
+		{
+			xEFile::MakePath(m_logPath + strDate + SLASH);
+		}
+		string filename = m_logPath + strDate + SLASH + m_logName + ".log";
+		m_logFile = fopen(filename.c_str(), "at+");
+
+		return (NULL != m_logFile);
+	}
+
+
+	////////////////////////////////////////////////////////////////
+	// 函数名：  closelogFile()
+	// 说明：   关闭志记录文件
+	// 输入参数：无
+	// 返回值：  无
+	//-------------------------------------------------------------
+	// 修改历史记录：
+	//    修改时间      2012-03-16 
+	//    修改人        zlc
+	//    修改内容概要
+	////////////////////////////////////////////////////////////////
+	void xbaseLog::closelogFile()
+	{
+		if(NULL != m_logFile)
+		{
+			fprintf(m_logFile, "log file close\n\n");
+			fflush(m_logFile);
+			fclose(m_logFile);
+		}
+
+		m_logFile = NULL;
+	}
+
+	void xbaseLog::closeLogFile()
+	{
+		if(NULL != m_logFile)
+		{
+			fprintf(m_logFile, "log file close\n\n");
+			fflush(m_logFile);
+			fclose(m_logFile);
+		}
+
+		m_logFile = NULL;
+	}
+
+	void xbaseLog::close()
+	{
+		
+	}
+	////////////////////////////////////////////////////////////////
+	// 函数名：  printLog()
+	// 说明：   打印日志
+	// 输入参数：format - 日志串
+	// 返回值：  无
+	//-------------------------------------------------------------
+	// 修改历史记录：
+	//    修改时间      2012-03-16 
+	//    修改人        zlc
+	//    修改内容概要
+	////////////////////////////////////////////////////////////////
+	void xbaseLog::printLog(const char* format, ...)
+	{
+		xGuard<xEmutex> lock(&log_mutex);
+
+
+		enum{
+			max_buf_length = 1000,
+		};
+
+		if(NULL == m_logFile)
+		{
+			if(!openLogFile())
+				return;
+		}
+
+
+		try
+		{
+			string logDate = xTimeUtil::get_date();
+			if(m_logDate.compare(logDate) != 0)
+			{
+				openLogFile();
+				//m_currLogCount = 1;
+			}
+
+			if(NULL == m_logFile)
+				return;
+
+			char buffer[max_buf_length + 1] = {0};
+			memset(buffer, 0x00, sizeof(buffer));
+			va_list ap;
+			va_start(ap, format);
+			vsnprintf(buffer, max_buf_length, format, ap);
+			va_end(ap);
+
+		//	string content(buffer);
+			fprintf(m_logFile, "%s  %s", xTimeUtil::getCurrentTimeStamp().c_str(), buffer);
+			fflush(m_logFile);
+		}
+		catch (...){}
+	}
+    void xbaseLog::innerprintlog(const char* filename,int line,const char*strdsc,const char *format ,va_list ap)
+    {
+        enum{
+            max_buf_length = 8192,
+        };
+
+        if(NULL == m_logFile)
+        {
+            if(!openLogFile())
+                return;
+        }
+
+        if(m_logDate != xTimeUtil::get_date())
+        {
+            if(!openLogFile())
+                return;
+        }
+
+        try
+        {
+            char buffer[max_buf_length + 1] = {0};
+          //  va_list ap;
+         //   va_start(ap, format);
+            vsnprintf(buffer, max_buf_length, format, ap);
+         //   va_end(ap);
+
+            //	string content(buffer);
+            fprintf(m_logFile, "[%s:%05d][%s][%s]%s", filename,line,strdsc,xTimeUtil::getCurrentTimeStamp().c_str(), buffer);
+            fflush(m_logFile);
+        }
+        catch (...){}
+    }
+    void xbaseLog::printerror(const char* filename,int line,const char*format,...)
+    {
+		xGuard<xEmutex> lock(&log_mutex);
+        if(m_loglevel < LOG_ERROR)
+            return;
+        va_list ap;
+        va_start(ap,format);
+        innerprintlog(filename,line,logdsc[LOG_ERROR].c_str(),format,ap);
+        va_end(ap);
+    }
+    void xbaseLog::printinfo(const char* filename,int line,const char*format,...)
+    {
+		xGuard<xEmutex> lock(&log_mutex);
+        if(m_loglevel < LOG_INFO)
+            return;
+        va_list ap;
+        va_start(ap,format);
+        innerprintlog(filename,line,logdsc[LOG_INFO].c_str(),format,ap);
+        va_end(ap);
+        //innerprintlog(filename,line,logdsc[LOG_INFO].c_str(),format);
+    }
+    void xbaseLog::printdebug(const char* filename,int line,const char*format,...)
+    {
+		xGuard<xEmutex> lock(&log_mutex);
+
+        if(m_loglevel < LOG_DEBUG)
+            return;
+       // innerprintlog(filename,line,logdsc[LOG_DEBUG].c_str(),format);
+        va_list ap;
+        va_start(ap,format);
+        innerprintlog(filename,line,logdsc[LOG_DEBUG].c_str(),format,ap);
+        va_end(ap);
+    }
+	void xbaseLog::info(const char* format, ...)
+	{
+		xGuard<xEmutex> lock(&log_mutex);
+
+        enum{
+			max_buf_length = 8192,
+		};
+
+		if(NULL == m_logFile)
+		{
+			if(!openLogFile())
+				return;
+		}
+
+		if(m_logDate != xTimeUtil::get_date())
+		{
+		    if(!openLogFile())
+				return;
+		}
+
+		try
+		{
+			char buffer[max_buf_length + 1] = {0};
+			va_list ap;
+			va_start(ap, format);
+			vsnprintf(buffer, max_buf_length, format, ap);
+			va_end(ap);
+
+		//	string content(buffer);
+			fprintf(m_logFile, "%s  %s", xTimeUtil::getCurrentTimeStamp().c_str(), buffer);
+			fflush(m_logFile);
+		}
+		catch (...){}
+	}
+	void xbaseLog::info(unsigned int index, const char* format, ...)
+	{
+		xGuard<xEmutex> lock(&log_mutex);
+
+
+		enum{
+			max_buf_length = 8192,
+		};
+
+		if(NULL == m_logFile)
+		{
+			if(!openLogFile())
+				return;
+		}
+
+		if(m_logDate != xTimeUtil::get_date())
+		{
+		    if(!openLogFile())
+				return;
+		}
+
+		try
+		{
+		    char buffer[max_buf_length + 1] = {0};
+			va_list ap;
+			va_start(ap, format);
+			vsnprintf(buffer, max_buf_length, format, ap);
+			va_end(ap);
+
+		//	string content(buffer);
+			string strInfo = xTimeUtil::getCurrentTimeStamp() + " " + buffer;
+		    fprintf(m_logFile, "%s", strInfo.c_str());
+			fflush(m_logFile);
+		}
+		catch (...){}
+	}
+	
+	void xbaseLog::error(const char* format, ...)
+	{
+		enum{
+			max_buf_length = 8192,
+		};
+
+		if(NULL == m_logFile)
+		{
+			if(!openLogFile())
+				return;
+		}
+
+		if(m_logDate != xTimeUtil::get_date())
+		{
+		    if(!openLogFile())
+				return;
+		}
+
+		try
+		{
+			char buffer[max_buf_length + 1] = {0};
+			va_list ap;
+			va_start(ap, format);
+			vsnprintf(buffer, max_buf_length, format, ap);
+			va_end(ap);
+
+		//	string content(buffer);
+			fprintf(m_logFile, "%s  %s", xTimeUtil::getCurrentTimeStamp().c_str(), buffer);
+			fflush(m_logFile);
+		}
+		catch (...){}
+	}
+
+	void xbaseLog::error(unsigned int index, const char* format, ...)
+	{
+		enum{
+			max_buf_length = 8192,
+		};
+
+		if(NULL == m_logFile)
+		{
+			if(!openLogFile())
+				return;
+		}
+
+		if(m_logDate != xTimeUtil::get_date())
+		{
+		    if(!openLogFile())
+				return;
+		}
+
+		try
+		{
+			char buffer[max_buf_length + 1] = {0};
+			va_list ap;
+			va_start(ap, format);
+			vsnprintf(buffer, max_buf_length, format, ap);
+			va_end(ap);
+
+	//		string content(buffer);
+			fprintf(m_logFile, "%s  %s", xTimeUtil::getCurrentTimeStamp().c_str(), buffer);
+			fflush(m_logFile);
+		}
+		catch (...){}
+	
+	}
+
+	void xbaseLog::warn(const char* format, ...)
+	{
+	    xGuard<xEmutex> lock(&log_mutex);
+
+		enum{
+			max_buf_length = 8192,
+		};
+
+		if(NULL == m_logFile)
+		{
+			if(!openLogFile())
+				return;
+		}
+
+		if(m_logDate != xTimeUtil::get_date())
+		{
+		    if(!openLogFile())
+				return;
+		}
+
+		try
+		{
+			char buffer[max_buf_length + 1] = {0};
+			va_list ap;
+			va_start(ap, format);
+			vsnprintf(buffer, max_buf_length, format, ap);
+			va_end(ap);
+
+		//	string content(buffer);
+			string strInfo = xTimeUtil::getCurrentTimeStamp() + " " + buffer;
+
+		//	m_msgQueue.TryPut(strInfo);
+
+			fprintf(m_logFile, "%s  %s", xTimeUtil::get_date().c_str(), buffer);
+			fflush(m_logFile);
+		}
+		catch (...){}
+	}
+
+	void xbaseLog::writeLog(string strInfo)
+	{
+		enum{
+			max_buf_length = 8192,
+		};
+
+		if(NULL == m_logFile)
+		{
+			if(!openLogFile())
+				return;
+		}
+
+		if(m_logDate != xTimeUtil::get_date())
+		{
+		    if(!openLogFile())
+				return;
+		}
+
+		try
+		{
+			fprintf(m_logFile, "%s", strInfo.c_str());
+			fflush(m_logFile);
+		}
+		catch (...){}
+	}
 }
-/26             1559887525  0     0     100644  2392      `
+
+/47             0           0     0     644     2503      `
 //xjshi 2019/3/13
 //重构hpp
 #include "xEventDemultiplexer.h"
@@ -1199,7 +1889,8 @@ int xEpollDemultiplexer::UnrequestEvent(handle_t handle)
 }
 
 #endif
-xsema.cpp/      1559887525  0     0     100644  2169      `
+
+xsema.cpp/      0           0     0     644     2294      `
 #include "xsema.h"
 using namespace SEABASE;
 
@@ -1325,8 +2016,7 @@ int32_t xSemaphore::signal()
 	while((ret=sem_post(&_sem))==-1&&EINTR==errno);
 	return (0==ret?0:SEA_SYSERROR);
 #endif
-}
-xthreadbase.cpp/1559887525  0     0     100644  2861      `
+}xthreadbase.cpp/0           0     0     644     3000      `
 #include "xthreadbase.h"
 using namespace SEABASE;
 
@@ -1466,8 +2156,349 @@ void xThread::destory()
 		//pthread_exit((void*)&thread_return);
 #endif
 	}
+}xTimeuil.cpp/   0           0     0     644     9744      `
+#include "xTimeuil.h"
+#include <iostream>
+#include "xStringuil.h"
+namespace SEABASE
+{
+
+    static struct tm* localtime_r(const time_t* timep, struct tm* result = NULL) {
+#ifdef WIN32
+        (void)result;
+        return localtime(timep);
+#else
+        return ::localtime_r(timep, result);
+#endif
+    }
+
+#ifdef _WIN32
+    //gettimeofday 引用自http://suacommunity.com/dictionary/gettimeofday-entry.php
+    FILETIME xTimeUtil::_ft = {0};
+	LARGE_INTEGER xTimeUtil::_pform = {0};
+#endif
+	  
+    int32_t xTimeUtil::gettimeofday(struct ::timeval *tv, struct timezone *tz)
+    {
+#ifndef _WIN32
+        return ::gettimeofday(tv,tz);
+#else
+        FILETIME ft;
+
+        unsigned __int64 tmpres = 0;
+        unsigned __int64 tmpres2 = 0;
+        static int tzflag = 0;
+        LARGE_INTEGER pform={0};
+        QueryPerformanceCounter(&pform);
+
+        if (NULL != tv)
+        {
+            GetSystemTimeAsFileTime(&ft);
+            if(ft.dwLowDateTime == _ft.dwLowDateTime && ft.dwHighDateTime == _ft.dwHighDateTime)
+            {
+                //时间相等时，计算时间偏移
+                LARGE_INTEGER pfreq = {0};
+                QueryPerformanceFrequency(&pfreq);
+                tmpres2 = ((pform.QuadPart - _pform.QuadPart) * 1000000UL)/pfreq.QuadPart;
+            }
+            else
+            {
+                //时间不等时，更新标准时间
+                xTimeUtil::_ft = ft;
+                QueryPerformanceCounter(&_pform);
+            }
+
+            tmpres |= ft.dwHighDateTime;
+            tmpres <<= 32;
+            tmpres |= ft.dwLowDateTime;
+
+            tmpres /= 10;
+            tmpres -= DELTA_EPOCH_IN_MICROSECS;
+			tmpres += tmpres2;	//增加修正偏移
+
+
+            tv->tv_sec = (long)(tmpres / 1000000UL);
+            tv->tv_usec = (long)(tmpres % 1000000UL);
+        }
+
+        if (NULL != tz)
+        {
+            if (!tzflag)
+            {
+                _tzset();
+                tzflag++;
+            }
+
+            tz->tz_minuteswest = _timezone / 60;
+            tz->tz_dsttime = _daylight;
+        }
+
+        return 0;
+#endif
+    }
+
+    uint64_t xTimeUtil::get_timestamp_s() {
+        struct ::timeval tv = {0, 0};
+		gettimeofday(&tv, NULL);
+        return tv.tv_sec;
+    }
+
+    uint64_t xTimeUtil::get_timestamp_ms() {
+        struct ::timeval tv = {0, 0};
+        gettimeofday(&tv, NULL);
+        return (uint64_t)tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    }
+
+    uint64_t xTimeUtil::get_timestamp_us() {
+        struct ::timeval tv = {0, 0};
+        gettimeofday(&tv, NULL);
+        return (uint64_t)tv.tv_sec * 1000000 + tv.tv_usec;
+    }
+
+    void xTimeUtil::safe_sleep_s(uint32_t second) {
+#ifdef _WIN32
+        return xTimeUtil::safe_sleep_ms(second * 1000);
+#else
+        struct timespec interval, remainder;
+        int32_t ret;
+
+        interval.tv_sec = second;
+        interval.tv_nsec = 0;
+
+        ret = nanosleep(&interval, &remainder);
+        if (-1 == ret) {
+            while (EINTR == errno && -1 == ret) {
+                ret = nanosleep(&remainder, &remainder);
+            }
+        }
+#endif
+    }
+
+    void xTimeUtil::safe_sleep_ms(uint32_t millisecond) {
+#ifdef _WIN32
+        ::Sleep(millisecond);
+#else
+        struct timespec interval, remainder;
+        int32_t ret;
+
+        interval.tv_sec = millisecond / 1000U;
+        interval.tv_nsec = (uint64_t)millisecond % 1000UL * 1000UL * 1000UL;
+
+        ret = nanosleep(&interval, &remainder);
+        if (-1 == ret) {
+            while (EINTR == errno && -1 == ret) {
+                ret = nanosleep(&remainder, &remainder);
+            }
+        }
+#endif
+    }
+
+    std::string xTimeUtil::format_datetime_str(uint64_t millisecond) {
+        time_t time = (time_t)(millisecond / 1000);
+        struct tm t;
+        struct tm *pt = NULL;
+        char buffer[24] = {0};
+
+        pt = SEABASE::localtime_r(&time, &t);
+        if(NULL != pt)
+        {
+            t = *pt;
+            snprintf(buffer, 24, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
+                t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, (int32_t)(millisecond % 1000));
+        }
+        return std::string(buffer);
+    }
+
+#ifndef _WIN32
+    int32_t xTimeUtil::get_abs_timespec(struct timespec* ts, int32_t millisecond) {
+        struct timeval tv;
+        int32_t ret;
+
+        if (NULL == ts) {
+            return EINVAL;
+        }
+
+        ret = gettimeofday(&tv, NULL);
+        if (0 != ret) {
+            return ret;
+        }
+
+        ts->tv_sec = tv.tv_sec;
+        ts->tv_nsec = tv.tv_usec * 1000UL;
+
+        ts->tv_sec += millisecond / 1000UL;
+        ts->tv_nsec += millisecond % 1000UL * 1000000UL;
+
+        ts->tv_sec += ts->tv_nsec/(1000UL * 1000UL *1000UL);
+        ts->tv_nsec %= (1000UL * 1000UL *1000UL);
+
+        return 0;
+    }
+#endif
+
+    int32_t xTimeUtil::strftimeval(char* buffer, int32_t buflen, const struct timeval* tv) {
+        if (NULL == buffer || NULL == tv) {
+            return -1;
+        }
+
+        time_t time = tv->tv_sec;
+        struct tm t;
+        struct tm *pt = NULL;
+
+        pt = SEABASE::localtime_r(&time, &t);
+        if(NULL == pt)
+        {
+            return -1;
+        }
+        t = *pt;
+        return snprintf(buffer, buflen, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
+                t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, (int32_t)tv->tv_usec / 1000);   
+    }
+
+    std::string xTimeUtil::get_date() {
+        time_t t = time(NULL);
+        struct tm result;
+        struct tm *presult = NULL;
+        char buffer[20] = {0};
+        presult = SEABASE::localtime_r(&t, &result);
+        if(NULL != presult)
+        {
+            result = *presult;
+            strftime(buffer, 20, "%Y%m%d", &result);
+        }
+
+        return std::string(buffer);
+    }
+
+    std::string xTimeUtil::get_time() {
+        time_t t = time(NULL);
+        struct tm result;
+        struct tm *presult = NULL;
+        char buffer[20] = {0};
+        presult = SEABASE::localtime_r(&t, &result);
+        if(NULL != presult)
+        {
+            result = *presult;
+            strftime(buffer, 20, "%H%M%S", &result);
+        }
+
+        return std::string(buffer);
+    }
+	//获取当前时间戳的字符串形式
+	//格式：YYYY-MM-DD HH:MI:SS.ms
+	string xTimeUtil::getCurrentTimeStamp()
+	{
+		struct timeval tv;
+		struct timezone tz;
+		gettimeofday(&tv , &tz);
+
+		time_t now = time(0);
+		struct tm *ts = localtime(&now);
+		if (!ts)
+			return "";
+		char buf[24] = {0};
+		sprintf(buf,"%04d-%02d-%02d %02d:%02d:%02d.%03d",
+			ts->tm_year + 1900, ts->tm_mon+1,ts->tm_mday, ts->tm_hour, ts->tm_min, ts->tm_sec,tv.tv_usec);
+		return buf;
+	}
+    int32_t xTimeUtil::get_day()
+    {
+        time_t t = time(NULL);
+        struct tm result;
+        struct tm *presult = NULL;
+        presult = SEABASE::localtime_r(&t, &result);
+        if(NULL == presult)
+        {
+            return -1;
+        }
+        result = *presult;
+        return result.tm_wday;
+    }
+
+    int32_t xTimeUtil::get_day( time_t time )
+    {
+        struct tm result;
+        struct tm *presult = NULL;
+        presult = SEABASE::localtime_r(&time, &result);
+        if(NULL == presult)
+        {
+            return -1;
+        }
+        result = *presult;
+        return result.tm_wday;
+    }
+
+    std::string xTimeUtil::format_time(const char * fmt)
+    {
+        //获取时间
+        struct ::timeval tv = {0, 0};
+        gettimeofday(&tv, NULL);
+        
+        return format_time(&tv, fmt);
+    }
+    
+    std::string xTimeUtil::format_time(time_t time, const char * fmt)
+    {
+        struct ::timeval tv = {0, 0};
+        tv.tv_sec = static_cast <long>(time);
+
+        return format_time(&tv, fmt);
+    }
+
+    std::string xTimeUtil::format_time(const struct timeval* tv, const char * fmt)
+    {
+        struct tm result;
+        struct tm  *presult = NULL;
+        time_t t = tv->tv_sec;
+        char buffer[50] = {0};
+        char tmp[8];
+        if(NULL == fmt)
+        {
+            //格式化当前时间
+            presult = SEABASE::localtime_r(&t, &result);
+            if(NULL != presult)
+            {
+                result = *presult;
+                strftime(buffer, sizeof(buffer), "%Y%m%d-%H:%M:%S", &result);
+            }
+        }
+        else
+        {
+            std::string str_fmt(fmt);
+            std::string str_tmp;
+            if(std::string::npos != str_fmt.find("[m]"))
+            {
+                //替换毫秒时间
+                snprintf(tmp,8,"%03d", (int)(tv->tv_usec / 1000) );
+                str_tmp.assign(tmp);
+                str_fmt = xStringUtil::replace_string(str_fmt, "[m]", str_tmp);
+            }
+            if(std::string::npos != str_fmt.find("[u]"))
+            {
+                //替换微秒时间
+                snprintf(tmp,8,"%06d", (int)(tv->tv_usec) );
+                str_tmp.assign(tmp);
+                str_fmt = xStringUtil::replace_string(str_fmt, "[u]", str_tmp);
+            }
+            if(std::string::npos != str_fmt.find("[U]"))
+            {
+                //替换微秒时间
+                snprintf(tmp,8,"%03d", (int)(tv->tv_usec % 1000) );
+                str_tmp.assign(tmp);
+                str_fmt = xStringUtil::replace_string(str_fmt, "[U]", str_tmp);
+            }
+            presult = SEABASE::localtime_r(&t, &result);
+            if(NULL != presult)
+            {
+                result = *presult;
+                strftime(buffer, sizeof(buffer), str_fmt.c_str(), &result);
+            }
+        }
+        return std::string(buffer);
+    }
 }
-xEmutex.cpp/    1559889186  0     0     100644  2953      `
+
+xEmutex.cpp/    0           0     0     644     3065      `
 #include "xEmutex.h"
 using namespace SEABASE;
 #ifndef _WIN32
@@ -1638,7 +2669,7 @@ bool xSpinLock::tryLock() const
 		return false;
 #endif
 }
-/51             1559887525  0     0     100644  4962      `
+/72             0           0     0     644     5235      `
 #include "xEthreadpool.h"
 using namespace SEABASE;
 /*class xShareable*/
@@ -1912,7 +2943,8 @@ int xThreadPool::addthread(int nthreads) {
 		}
 	}
 	return ret;
-}xReactor.cpp/   1559887525  0     0     100644  1912      `
+}
+xReactor.cpp/   0           0     0     644     1997      `
 //xjshi 2019/3/13 
 //重构hpp xReacotr.cpp
 
@@ -1998,7 +3030,8 @@ int xReactorImplentation::RegisterTimeTask(xheaptimer* timerevent)
 	m_eventtimer->add_timer(timerevent);
 	return 0;
 }
-xReactor* ReactorInstance::m_reactor=NULL;xEtcpclient.cpp/1559887525  0     0     100644  623       `
+xReactor* ReactorInstance::m_reactor=NULL;
+xEtcpclient.cpp/0           0     0     644     648       `
 #include "xEtcpclient.h"
 using namespace  SEABASE;
 

@@ -5,7 +5,7 @@ int xEtcpListen::startlisten(const char*ip,int port)
 {
 	InitSocket();
 	m_listenFd = CreateSocket(SOCK_STREAM);
-	bool bReuseaddr=TRUE;
+	bool bReuseaddr=true;
 	setsockopt(m_listenFd,SOL_SOCKET,SO_REUSEADDR,(const char*)&bReuseaddr,sizeof(bool));
 	if(m_listenFd==INVALID_SOCKET)
 		return -1;

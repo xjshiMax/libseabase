@@ -27,7 +27,7 @@ namespace SEABASE
 
         static bool Hex2Ascii();
 
-		static wchar_t* CharacterCode::AnsiToUnicode(const char* szStr);
+		static wchar_t* AnsiToUnicode(const char* szStr);
     };
 }
 

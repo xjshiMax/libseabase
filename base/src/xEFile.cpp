@@ -8,7 +8,11 @@ using namespace SEABASE;
 #include <direct.h>
 #include <io.h>
 #else
-
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <dirent.h>
 #endif
 bool xEFile::MakePath(const string& path)
 {
@@ -64,7 +68,7 @@ bool xEFile::Copy(const string& sourceFile, const string& destFile, bool overwri
         //源文件不存在或不可读
         return false;
     }
-    if (overwrite && exists(destFile))
+    if (overwrite && Exists(destFile))
     {
         //目标文件存在
         if (!canWrite(destFile))
@@ -316,7 +320,7 @@ bool xEFile::search(const string& condition, vector< string >& files)
     }
     closedir(dfd);
     return true;
-}
+//}
 #endif
     return true;
 }
