@@ -6,7 +6,9 @@
 #include <vector>
 using namespace std;
 using namespace SEABASE;
+#ifndef CMAKE_COMPILE
 #pragma comment(lib,"../../output/lib/windows/libseabase.lib")
+#endif
 // class session:public xReceiveback
 // {
 // public:
