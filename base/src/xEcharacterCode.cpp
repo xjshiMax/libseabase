@@ -7,6 +7,8 @@
 #include <iconv.h>
 #endif
 #include<string.h>
+#include<stdio.h>
+#include<errno.h>
 using namespace std;
 
 using namespace SEABASE;
@@ -41,7 +43,19 @@ string CharacterCode::Gb2312ToUTF_8(char* gb2312)
     char *dst_str=new char[dst_len];
     char*out=dst_str;
     memset(dst_str, 0, dst_len);
-    if (iconv(cd, pin, &src_len, &out, &dst_len) == -1)
+	int ret = iconv(cd, pin, &src_len, &out, &dst_len);
+	printf("ret=%d,erron=%d\n",ret,errno);
+	printf("out=%s\n",out);
+	switch(errno)
+	{
+	case  E2BIG:
+		printf("E2BIG\n");
+	case  EILSEQ:
+		printf("EILSEQ\n");
+	case  EINVAL:
+		printf("EINVAL\n");
+	}
+    if (ret == -1)
         return "";
     iconv_close(cd);
     string strtemp(dst_str,strlen(dst_str));
