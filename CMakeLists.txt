@@ -23,7 +23,7 @@ else()
     cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 endif()
 
-project(libseabase.sln)
+project(libseabase)
 
 # Winsock.
 if(WIN32)
@@ -65,6 +65,8 @@ set(TCPSERVER_DIR ${PROJECT_SOURCE_DIR}/libsaebase/tcpserver)
 
 aux_source_directory(${LIB_S_DIR} SOURCE_SEABASE)
 aux_source_directory(${TCPSERVER_DIR} TCPSERVER)
+aux_source_directory(${PROJECT_SOURCE_DIR}/ExAppOnbase/src ExLayerSource)
+
 
 #动态库
 add_library(seabase SHARED ${SOURCE_SEABASE})
@@ -74,9 +76,21 @@ if(WIN32)
 else()
 target_link_libraries(seabase ${DEPEN_LIBS})
 endif()
+#ExApplayer库
+add_library(ExAppLayer ${ExLayerSource})
+target_include_directories(ExAppLayer PUBLIC ${PROJECT_SOURCE_DIR}/ExAppOnbase/include)
+target_link_libraries(ExAppLayer seabase_static)
+if(WIN32)
+	target_link_directories(ExAppLayer PUBLIC ${PROJECT_SOURCE_DIR}/base/curl7.65.1/windows/x86-debug-static/lib)
+	target_link_libraries(ExAppLayer libcurl_a_debug)
+endif()
+
 #可执行程序
 add_executable(tcpserver1 ${TCPSERVER})
 target_link_libraries(tcpserver1 seabase_static )
+#test/moduletest
+add_executable(moduletest ${PROJECT_SOURCE_DIR}/test/moduletest/main.cpp)
+target_link_libraries(moduletest ExAppLayer )
 
 
 
