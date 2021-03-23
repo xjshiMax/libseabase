@@ -1,4 +1,5 @@
 #include "xtimeheap.h"
+#include "xTimeuil.h"
 using namespace SEABASE;
 void xtime_heap::percolate_down(int hole)
 {
@@ -112,6 +113,27 @@ void xtime_heap::tick()
 			array[0]->cb_func(array[0]->user_data);
 		}
 		pop_timer();
+		temp=array[0];
+	}
+}
+void xtime_heap::tick_ms(vector<xheaptimer*>&listofdelete)
+{
+	xheaptimer* temp=array[0];
+	time_t cur = xTimeUtil::get_timestamp_ms();
+	while(!empty())
+	{
+		if(!temp)
+		{
+			break;
+		}
+		if(temp->expire >cur)
+			break;
+		if(array[0]->cb_func)
+		{
+			array[0]->cb_func(array[0]->user_data);
+		}
+		pop_timer();
+		listofdelete.push_back(temp);
 		temp=array[0];
 	}
 }

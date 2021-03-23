@@ -37,6 +37,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dlltest", "dlltest\dlltest.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "charswitch", "charswitch\charswitch.vcxproj", "{6EF9452F-FE72-47BD-9C9B-122D5B015256}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Reflect", "Reflect\Reflect.vcxproj", "{ECA6E40C-63E8-4D32-ACBF-B0DDBFA58DE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -171,6 +173,12 @@ Global
 		{6EF9452F-FE72-47BD-9C9B-122D5B015256}.Release|Win32.ActiveCfg = Release|Win32
 		{6EF9452F-FE72-47BD-9C9B-122D5B015256}.Release|Win32.Build.0 = Release|Win32
 		{6EF9452F-FE72-47BD-9C9B-122D5B015256}.Release|x64.ActiveCfg = Release|Win32
+		{ECA6E40C-63E8-4D32-ACBF-B0DDBFA58DE8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ECA6E40C-63E8-4D32-ACBF-B0DDBFA58DE8}.Debug|Win32.Build.0 = Debug|Win32
+		{ECA6E40C-63E8-4D32-ACBF-B0DDBFA58DE8}.Debug|x64.ActiveCfg = Debug|Win32
+		{ECA6E40C-63E8-4D32-ACBF-B0DDBFA58DE8}.Release|Win32.ActiveCfg = Release|Win32
+		{ECA6E40C-63E8-4D32-ACBF-B0DDBFA58DE8}.Release|Win32.Build.0 = Release|Win32
+		{ECA6E40C-63E8-4D32-ACBF-B0DDBFA58DE8}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

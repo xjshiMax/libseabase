@@ -45,13 +45,13 @@ xSyncQueue<T>::~xSyncQueue() {
 template<typename T>
 bool xSyncQueue<T>::Empty() {
 	//SingleLocker s(&mLocker);
-	xGuard guard(m_lock);
-	return mQueue.empty();
+	xGuard<xEmutex> guard(&m_lock);
+	return m_queue.empty();
 }
 
 template<typename T>
 typename queue<T>::size_type xSyncQueue<T>::Size() {
-	xGuard guard(m_lock);
+	xGuard<xEmutex> guard(&m_lock);
 	return m_queue.size();
 }
 
@@ -66,7 +66,7 @@ void xSyncQueue<T>::BlockFront(T& value) {
 
 template<typename T>
 bool xSyncQueue<T>::Pop(T& value) {
-	xGuard guard(m_lock);
+	xGuard<xEmutex> guard(&m_lock);
 
 	if (m_queue.empty()) {
 		return false;
@@ -107,7 +107,7 @@ void xSyncQueue<T>::HarfBlockPop(T& value) {
 
 template<typename T>
 void xSyncQueue<T>::Push(const T& value) {
-	xGuard guard(m_lock);
+	xGuard<xEmutex> guard(&m_lock);
 
 	if (m_queue.size() >= MAX_QUEUE_COUNT) { //maybe overflow, need log out
 		m_queue.pop();

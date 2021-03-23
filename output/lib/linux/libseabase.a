@@ -4,8 +4,9 @@ xEcharacterCode.cpp/
 xDemultiplexerSelect.cpp/
 xEventDemultiplexer.cpp/
 xEthreadpool.cpp/
-xtimeheap.cpp/  0           0     0     644     2406      `
+xtimeheap.cpp/  0           0     0     644     2812      `
 #include "xtimeheap.h"
+#include "xTimeuil.h"
 using namespace SEABASE;
 void xtime_heap::percolate_down(int hole)
 {
@@ -119,6 +120,27 @@ void xtime_heap::tick()
 			array[0]->cb_func(array[0]->user_data);
 		}
 		pop_timer();
+		temp=array[0];
+	}
+}
+void xtime_heap::tick_ms(vector<xheaptimer*>&listofdelete)
+{
+	xheaptimer* temp=array[0];
+	time_t cur = xTimeUtil::get_timestamp_ms();
+	while(!empty())
+	{
+		if(!temp)
+		{
+			break;
+		}
+		if(temp->expire >cur)
+			break;
+		if(array[0]->cb_func)
+		{
+			array[0]->cb_func(array[0]->user_data);
+		}
+		pop_timer();
+		listofdelete.push_back(temp);
 		temp=array[0];
 	}
 }xEFile.cpp/     0           0     0     644     6993      `
@@ -448,7 +470,7 @@ bool xEFile::search(const string& condition, vector< string >& files)
 #endif
     return true;
 }
-/0              0           0     0     644     3801      `
+/0              0           0     0     644     4062      `
 #include "../include/xEcharacterCode.h"
 #ifdef WIN32
 #include <Windows.h>
@@ -458,6 +480,8 @@ bool xEFile::search(const string& condition, vector< string >& files)
 #include <iconv.h>
 #endif
 #include<string.h>
+#include<stdio.h>
+#include<errno.h>
 using namespace std;
 
 using namespace SEABASE;
@@ -492,7 +516,19 @@ string CharacterCode::Gb2312ToUTF_8(char* gb2312)
     char *dst_str=new char[dst_len];
     char*out=dst_str;
     memset(dst_str, 0, dst_len);
-    if (iconv(cd, pin, &src_len, &out, &dst_len) == -1)
+	int ret = iconv(cd, pin, &src_len, &out, &dst_len);
+	printf("ret=%d,erron=%d\n",ret,errno);
+	printf("out=%s\n",out);
+	switch(errno)
+	{
+	case  E2BIG:
+		printf("E2BIG\n");
+	case  EILSEQ:
+		printf("EILSEQ\n");
+	case  EINVAL:
+		printf("EINVAL\n");
+	}
+    if (ret == -1)
         return "";
     iconv_close(cd);
     string strtemp(dst_str,strlen(dst_str));
@@ -586,7 +622,6 @@ void CharacterCode::Ascii2BCD( char *bcd_buf, char *asc_buf,int num)
 	return NULL;
 
 	}
-
 /21             0           0     0     644     1791      `
 //xjshi 2019/3/13
 //重构hpp
@@ -1284,11 +1319,11 @@ void Eventcallback::DataCallback(int sockfd,xEventDemultiplexer*Demultiplexer,vo
 void Eventcallback::ErrCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg)
 {
 
-}xbaseLog.cpp/   0           0     0     644     10139     `
+}xbaseLog.cpp/   0           0     0     644     9739      `
 ///////////////////////////////////////////////////////////////////////
 /* 文件名： xbaseLog.cpp
  文件作用：		
-    实现配置文件数据的读取功能、存放全局变量和全局静态方法。   
+    实现日志log    
 //-------------------------------------------------------------------
  修改历史记录：
     修改时间      2020-11-9
@@ -1301,6 +1336,7 @@ void Eventcallback::ErrCallback(int sockfd,xEventDemultiplexer*Demultiplexer,voi
 
 #include <sstream>
 #include "xbaseLog.h"
+const char *LIB_INFO = "libseabase.so versions: 1.0.2#20210323 ";
 
 
 #define SLASH "/"
@@ -1380,11 +1416,6 @@ namespace SEABASE{
 	// 输入参数：无
 	// 返回值：  无
 	//-------------------------------------------------------------
-	// 修改历史记录：
-	//    修改时间      2012-03-16 
-	//    修改人        zlc
-	//    修改内容概要
-	////////////////////////////////////////////////////////////////
 	bool xbaseLog::openLogFile()
 	{
 		if(NULL != m_logFile)
@@ -1422,11 +1453,6 @@ namespace SEABASE{
 	// 说明：   关闭志记录文件
 	// 输入参数：无
 	// 返回值：  无
-	//-------------------------------------------------------------
-	// 修改历史记录：
-	//    修改时间      2012-03-16 
-	//    修改人        zlc
-	//    修改内容概要
 	////////////////////////////////////////////////////////////////
 	void xbaseLog::closelogFile()
 	{
@@ -1462,10 +1488,6 @@ namespace SEABASE{
 	// 输入参数：format - 日志串
 	// 返回值：  无
 	//-------------------------------------------------------------
-	// 修改历史记录：
-	//    修改时间      2012-03-16 
-	//    修改人        zlc
-	//    修改内容概要
 	////////////////////////////////////////////////////////////////
 	void xbaseLog::printLog(const char* format, ...)
 	{
@@ -2156,7 +2178,7 @@ void xThread::destory()
 		//pthread_exit((void*)&thread_return);
 #endif
 	}
-}xTimeuil.cpp/   0           0     0     644     9744      `
+}xTimeuil.cpp/   0           0     0     644     9836      `
 #include "xTimeuil.h"
 #include <iostream>
 #include "xStringuil.h"
@@ -2396,9 +2418,11 @@ namespace SEABASE
 		struct tm *ts = localtime(&now);
 		if (!ts)
 			return "";
-		char buf[24] = {0};
-		sprintf(buf,"%04d-%02d-%02d %02d:%02d:%02d.%03d",
+		char buf[24] = {'\0'};
+		//sprintf 可能会发生越界，不会自动添加'\0',使用snprintf
+		snprintf(buf,23,"%04d-%02d-%02d %02d:%02d:%02d.%03d",
 			ts->tm_year + 1900, ts->tm_mon+1,ts->tm_mday, ts->tm_hour, ts->tm_min, ts->tm_sec,tv.tv_usec);
+		printf("time=%s\n",buf);
 		return buf;
 	}
     int32_t xTimeUtil::get_day()

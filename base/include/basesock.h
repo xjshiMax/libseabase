@@ -263,7 +263,7 @@ inline static int ShutDownSocket(int socket,int howto)
 }
 
 
-//与socket 相关的一些函数封装。
+//与socket 相关的一些函数封装。（管理socket）
 
 // namespace Network_function
 // {
@@ -349,5 +349,23 @@ inline static bool getLocalInfo(IN int socket,OUT char*ip,OUT int &port)
 	} 
 	return false;
 }
+//ioctl  设置各类插口操作
+inline static bool IoctlInfo(IN int socket,OUT char*ip,OUT int &port)
+{
+	struct sockaddr_in name;
+	if ( getLocalInfo(socket, name) )
+	{
+		if(sizeof(ip)<sizeof(inet_ntoa(name.sin_addr)))
+			return false;
+		strcpy(ip,inet_ntoa(name.sin_addr));
+		port = ntohs(name.sin_port);
+		return true;
+	} 
+	return false;
+}
+//fcntl 修改I/O语义
+
+//select/poll/epoll IO复用
+
 
 }

@@ -11,9 +11,15 @@
 #include <netinet/in.h>
 #include <time.h>
 #endif
+#include <vector>
+using namespace std;
 namespace SEABASE{
 #define BUFFER_SIZE 64
 
+enum timer_type{
+	timer_sec,
+	timer_msec,//毫秒
+};
 
 //使用小根对来实现定时器
 class xheaptimer
@@ -24,6 +30,7 @@ public:
 	{
 		expire = time(NULL)+delay;
 	}
+	virtual ~xheaptimer(){}
 public:
 	time_t expire;
 	void (*cb_func)(void*);
@@ -82,6 +89,7 @@ public:
 	xheaptimer * top()const ;
 	void pop_timer();
 	void tick();
+	void tick_ms(vector<xheaptimer*>&listofdelete);
 	bool empty()const {return m_cur_size==0;}
 private:
 	void percolate_down(int hole);  //最小堆调整

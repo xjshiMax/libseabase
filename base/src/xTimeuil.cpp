@@ -237,9 +237,11 @@ namespace SEABASE
 		struct tm *ts = localtime(&now);
 		if (!ts)
 			return "";
-		char buf[24] = {0};
-		sprintf(buf,"%04d-%02d-%02d %02d:%02d:%02d.%03d",
+		char buf[24] = {'\0'};
+		//sprintf 可能会发生越界，不会自动添加'\0',使用snprintf
+		snprintf(buf,23,"%04d-%02d-%02d %02d:%02d:%02d.%03d",
 			ts->tm_year + 1900, ts->tm_mon+1,ts->tm_mday, ts->tm_hour, ts->tm_min, ts->tm_sec,tv.tv_usec);
+		printf("time=%s\n",buf);
 		return buf;
 	}
     int32_t xTimeUtil::get_day()
