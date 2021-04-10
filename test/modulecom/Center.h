@@ -22,7 +22,7 @@ public:
 		p_highmodule->startModule();
 		p_lowmodule = new lowModule(&globalManager::getInstance());
 		globalManager::getInstance().register2global(lowM,p_lowmodule);
-		p_lowmodule->startModule();
+		p_lowmodule->startlowmodule();
 
 	}
 	int cmdparse(char cmd,char*param);

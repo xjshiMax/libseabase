@@ -4,10 +4,15 @@
 1.与客户端交互，包括tcp，http
 2.数据持久化
 3.日志处理
-4.
+4. 断线重连
 */
 #pragma once
 #include "ExAppOnbase/include/module.h"
+#include "ConnectHandle.h"
+enum lowmodule_timer
+{
+	timer_reconnect=0x01,
+};
 class lowModule	:  public moduleBase<messageC>
 {
 public:
@@ -15,8 +20,14 @@ public:
 	{
 
 	}
-	void HandleMessage(messageC& Message)
-	{
-		printf("lowModule get a message:%d\n",Message.messageType);
-	}
+	void HandleMessage(messageC& Message) ;
+	int startlowmodule();
+	void reconnect();
+	void sendData(char*pdata,int len);
+
+
+	int m_timerhandle_reconn;
+	ConnectHandle m_tcpConnect;
+
+
 };

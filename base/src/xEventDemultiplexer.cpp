@@ -25,6 +25,8 @@ int xEpollDemultiplexer::WaitEvents( int timeout/* =0 */,xtime_heap* event_timer
 		{
 			int handle = ep_events[idx].data.fd;
 
+			//这里需要添加事件的过期判断
+
 			if(ep_events[idx].events & EPOLLERR || (ep_events[idx].events & EPOLLHUP))
 			{
 				if(m_handlers[handle].m_errorptr)

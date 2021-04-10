@@ -12,8 +12,8 @@ highModule::highModule(ManagerM<messageC>* manager):moduleBase(manager)
 	moduleConfig configfile;
 	//configfile.loadFromDB("");
 
-	m_timer_getsystimeHandler = timerStart(timer_getsystemtimr,5000);
-	startgetipTimer();
+	//m_timer_getsystimeHandler = timerStart(timer_getsystemtimr,5000);
+	//startgetipTimer();
 	//m_log.openLogFile();
 }
 void highModule::HandleMessage(messageC& Message)
