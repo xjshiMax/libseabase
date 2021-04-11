@@ -102,6 +102,12 @@
     <ClInclude Include="..\..\base\include\xbaseLog.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\base\include\link_queue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\include\xapplication.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\base\src\xDemultiplexerSelect.cpp">

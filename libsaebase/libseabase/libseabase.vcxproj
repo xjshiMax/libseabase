@@ -125,7 +125,9 @@ copy $(ProjectDir)..\..\base\include\  $(ProjectDir)..\..\output\include\</Comma
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\base\include\basesock.h" />
+    <ClInclude Include="..\..\base\include\link_queue.h" />
     <ClInclude Include="..\..\base\include\timebase.h" />
+    <ClInclude Include="..\..\base\include\xapplication.h" />
     <ClInclude Include="..\..\base\include\xAtomicInt32.h" />
     <ClInclude Include="..\..\base\include\xAutoLock.h" />
     <ClInclude Include="..\..\base\include\xbaseclass.h" />

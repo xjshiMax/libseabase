@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include "xtimeheap.h"
+#include "link_queue.h"
 namespace SEABASE
 {
 
@@ -13,11 +14,14 @@ typedef int handle_t;
 		xReadEvent    =0x01,
 		xWriteEvent   =0x02,
 		xErrorEvent   =0x04,
+		xTimeEvent    =0x08,
+		xSignalEvent  =0x10,
 		xEventMask    =0xff
 };
 
 class xEventDemultiplexer;
-typedef void (*pcallbackptr)(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg);
+struct xEvent;
+typedef void (*pcallbackptr)(xEvent*ev);
 	//注册事件结构体
 typedef struct xEvent{
 	xEvent()
@@ -34,9 +38,16 @@ typedef struct xEvent{
 		m_readarg=NULL;
 		m_writearg=NULL;
 		m_errorarg=NULL;
+		m_accept= 0;
+		m_instance = 0;
+		m_eventback = 0;
 	}
 	handle_t m_Eventfd;
 	unsigned int m_eventmask;		//读写，错误事件
+	unsigned int m_accept;//是否是新连接 0:需要accpet,1不需要accpet
+	unsigned int m_instance;//事件是否过期,过期事件不处理，并且从socket从集合移除 0:正常，1：过期
+	unsigned int m_posted; //是否已经处理 0:未处理，1处理过
+	handle_t m_eventback;	//返回事件类型
 	pcallbackptr m_readptr;
 	pcallbackptr m_writeptr;
 	pcallbackptr m_errorptr;
@@ -44,6 +55,9 @@ typedef struct xEvent{
 	void*	 m_readarg;
 	void*	 m_writearg;
 	void*	 m_errorarg;
+	/* the posted queue */
+	link_queue_t      equeue;
+	xEventDemultiplexer* m_distributor;
 }xEvent_t;
 
 class xEventDemultiplexer
@@ -60,23 +74,6 @@ public:
 };
 
 //事件处理基类句
-
-
-// class xEventHandler
-// {
-// public:
-// 	xEventHandler():preadptr(NULL),callbackhandle(this){}
-// 	virtual~xEventHandler(){}
-// 	// 获取需要注册的套截字或者其他文件描述符
-// 	virtual handle_t GetHandler()const = 0;
-// 	virtual void HandleRead(int listentfd,xEventDemultiplexer*demultiplex){}
-// 	virtual void HandlerWrite(){}
-// 	virtual void HandlerError(){}
-// 	pcallbackptr m_readptr;
-// 	handle_t m_Eventfd; //注册事件时，对应的fd.如果派生类同时要注册多个fd，那么需要修改m_Eventfd为对应的fd.
-// 	xEventHandler* callbackhandle;
-// };
-// 分发器实现（IO复用分离时间的机制）
 
 class Noncopyable
 {
@@ -97,7 +94,8 @@ public:
 	virtual void Ondata(int socketfd,char*data,int len)=0;
 	virtual void Onclose(int socketfd)=0;
 };
-
+// extern link_queue_t g_accept_events;
+// extern link_queue_t g_rd_event;
 }
 
 #ifndef WIN32

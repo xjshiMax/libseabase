@@ -20,10 +20,10 @@ namespace SEABASE{
 	class Eventcallback
 	{
 	public:
-		static void InitEvent(xEvent_t& e, SOCKET sock, void *arg,pcallbackptr func);
-		static void AcceptCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg);
-		static void DataCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg);
-		static void ErrCallback(int sockfd,xEventDemultiplexer*Demultiplexer,void *arg);
+		static void InitEvent(xEvent_t& e, SOCKET sock, void *arg,pcallbackptr func,int isinstance=0,int isaccped=0);
+		static void AcceptCallback(xEvent*ev);
+		static void DataCallback(xEvent*ev);
+		static void ErrCallback(xEvent*ev);
 	};
 
 }

@@ -2,6 +2,8 @@
 //ÖØ¹¹hpp
 #include"xDemultiplexerSelect.h"
 using namespace SEABASE;
+extern link_queue_t g_accept_events;
+extern link_queue_t g_rd_event;
 
 //select
 #ifdef WIN32
@@ -33,11 +35,7 @@ int xSelectDemultiplexer::WaitEvents(int timeout,xtime_heap* event_timer )
 			int fd=m_fdReadSave.fd_array[j];
 			if(FD_ISSET(fd,&fdread))
 			{
-				//m_handlers[fd]->HandleRead(fd,this);
-				if(m_handlers[fd].m_readptr)
-				{
-					m_handlers[fd].m_readptr(fd,this,(void*)m_handlers[fd].m_readarg);
-				}
+				link_queue_insert_tail(&g_rd_event,&m_handlers[fd].equeue);
 			}
 		}
 
@@ -51,6 +49,7 @@ int xSelectDemultiplexer::WaitEvents(int timeout,xtime_heap* event_timer )
 int xSelectDemultiplexer::RequestEvent(xEvent_t &e)
 {
 	int handle = e.m_Eventfd;
+	e.m_distributor = this;
 	std::map<handle_t,xEvent_t>::iterator it = m_handlers.find(handle);
 	if(it==m_handlers.end())
 	{
@@ -60,10 +59,6 @@ int xSelectDemultiplexer::RequestEvent(xEvent_t &e)
 	if((int)handle > m_maxfdID)
 		m_maxfdID = (int)handle +1;
 	++m_fd_num;
-	// 	if(evt & xWriteEvent)
-	// 		FD_SET(handle,&m_fdread);
-	// 	if(evt &xErrorEvent)
-	// 		FD_SET(handle,&m_fdError);
 	return 0;
 }
 int xSelectDemultiplexer::UnrequestEvent(SEABASE::handle_t handle)

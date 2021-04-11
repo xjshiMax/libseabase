@@ -8,6 +8,7 @@
 #include "xbaseclass.h"
 #include "xtimeheap.h"
 #include "xNetdata.h"
+#include "link_queue.h"
 #ifdef WIN32
 	#include "xDemultiplexerSelect.h"
 #else
@@ -30,16 +31,7 @@ namespace SEABASE
 	{
 	public:
 		//这里给定定时器最小堆的最大大小为 INITSIZE=100.如果超过会自动resize()
-		xReactorImplentation()
-		{
-#ifdef WIN32
-			m_demultiplexer = new xSelectDemultiplexer();
-#else
-			m_demultiplexer = new xEpollDemultiplexer();
-#endif
-			//m_demultiplexer = static_cast<xEventDemultiplexer*>(new xEpollDemultiplexer());
-			m_eventtimer = new xtime_heap(INITSIZE);
-		}
+		xReactorImplentation();
 		~xReactorImplentation()
 		{
 			delete m_demultiplexer;
@@ -56,6 +48,7 @@ namespace SEABASE
 			_bIsstop=false;
 			HandlerEvents();
 		}
+		int process_event(link_queue_t *posted);
 		int RegisterTimeTask(xheaptimer* timerevent);
 	private:
 		xEventDemultiplexer *		m_demultiplexer;
@@ -68,10 +61,6 @@ class xReactor
 {
 public:
 	xReactor();
-
-// 	{
-// 		m_reactorimp = new xReactorImplentation();
-// 	}
 	virtual ~xReactor();
 	int start() //启动事件循环
 	{
@@ -85,7 +74,6 @@ public:
 	//注册事件，事件响应对象和事件类型，读写
 
 	int RegisterHandler(xReceivebackbase*handler,handle_t&sockfd,int type=datatype::TcpAcceptCallback);
-	//int RemoveHandler(xEventHandler* handler);
 	int	RemoveHandlerbyfd(handle_t handlefd);				//针对tcp等需要根据fd来注销事件的场景添加。
 	void HandlerEvents();
 

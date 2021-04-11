@@ -77,9 +77,9 @@ else()
 target_link_libraries(seabase ${DEPEN_LIBS})
 endif()
 #ExApplayer库
-add_library(ExAppLayer ${ExLayerSource})
-target_include_directories(ExAppLayer PUBLIC ${PROJECT_SOURCE_DIR}/ExAppOnbase/include)
-target_link_libraries(ExAppLayer seabase_static)
+#add_library(ExAppLayer ${ExLayerSource})
+#target_include_directories(ExAppLayer PUBLIC ${PROJECT_SOURCE_DIR}/ExAppOnbase/include)
+#target_link_libraries(ExAppLayer seabase_static)
 if(WIN32)
 	target_link_directories(ExAppLayer PUBLIC ${PROJECT_SOURCE_DIR}/base/curl7.65.1/windows/x86-debug-static/lib)
 	target_link_libraries(ExAppLayer libcurl_a_debug)
@@ -87,10 +87,10 @@ endif()
 
 #可执行程序
 add_executable(tcpserver1 ${TCPSERVER})
-target_link_libraries(tcpserver1 seabase_static )
+target_link_libraries(tcpserver1 seabase_static pthread)
 #test/moduletest
-add_executable(moduletest ${PROJECT_SOURCE_DIR}/test/moduletest/main.cpp)
-target_link_libraries(moduletest ExAppLayer )
+#add_executable(moduletest ${PROJECT_SOURCE_DIR}/test/moduletest/main.cpp)
+#target_link_libraries(moduletest ExAppLayer )
 
 
 

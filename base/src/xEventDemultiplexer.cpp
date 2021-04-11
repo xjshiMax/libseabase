@@ -2,6 +2,8 @@
 //重构hpp
 #include "xEventDemultiplexer.h"
 using namespace SEABASE;
+extern link_queue_t g_accept_events;
+extern link_queue_t g_rd_event;
 #ifndef WIN32
 xEpollDemultiplexer::xEpollDemultiplexer()
 {
@@ -23,35 +25,30 @@ int xEpollDemultiplexer::WaitEvents( int timeout/* =0 */,xtime_heap* event_timer
 	{
 		for(int idx = 0;idx<num;++idx)
 		{
-			int handle = ep_events[idx].data.fd;
-
-			//这里需要添加事件的过期判断
+			//int handle = ep_events[idx].data.fd;
+			xEvent_t* ev = (xEvent_t*)ep_events[idx].data.ptr;
+			//这里需要添加事件的过期判断	。 
+			if(ev==NULL||ev->m_instance!=0)
+			{
+				continue;
+			}
 
 			if(ep_events[idx].events & EPOLLERR || (ep_events[idx].events & EPOLLHUP))
 			{
-				if(m_handlers[handle].m_errorptr)
-				{
-					m_handlers[handle].m_errorptr(handle,this,(void*)m_handlers[handle].m_errorarg);
-				}
+				ev->m_eventback = xErrorEvent;
 			}
 			else
 			{
 				if(ep_events[idx].events & EPOLLIN)
 				{
-					//(*handlers)[handle]->HandleRead(handle,this);
-					if(m_handlers[handle].m_readptr)
-					{
-						m_handlers[handle].m_readptr(handle,this,(void*)m_handlers[handle].m_readarg);
-					}
+						ev->m_eventback = xReadEvent;
 				}
 				if(ep_events[idx].events & EPOLLOUT)
 				{
-					if(m_handlers[handle].m_writeptr)
-					{
-						m_handlers[handle].m_writeptr(handle,this,(void*)m_handlers[handle].m_writearg);
-					}
+					ev->m_eventback = xWriteEvent;
 				}
 			}
+			link_queue_insert_tail(&g_rd_event,&ev->equeue);
 		}
 
 	}
@@ -65,7 +62,15 @@ int xEpollDemultiplexer::WaitEvents( int timeout/* =0 */,xtime_heap* event_timer
 int xEpollDemultiplexer::RequestEvent(xEvent_t&e)
 {
 	epoll_event ep_event;
-	ep_event.data.fd = e.m_Eventfd;
+	//ep_event.data.fd = e.m_Eventfd;
+	int handle = e.m_Eventfd;
+	e.m_distributor = this;
+	std::map<handle_t,xEvent_t>::iterator it = m_handlers.find(handle);
+	if(it==m_handlers.end())
+	{
+		m_handlers[handle]=e;
+	}
+	ep_event.data.ptr = &m_handlers[handle];	   //记录整个指针
 	ep_event.events = 0;
 	if(e.m_eventmask &xReadEvent ) //	 读事件
 	{
@@ -86,12 +91,13 @@ int xEpollDemultiplexer::RequestEvent(xEvent_t&e)
 			++m_fd_num;
 		}
 	}
-	int handle = e.m_Eventfd;
-	std::map<handle_t,xEvent_t>::iterator it = m_handlers.find(handle);
-	if(it==m_handlers.end())
-	{
-		m_handlers[handle]=e;
-	}
+// 	int handle = e.m_Eventfd;
+// 	std::map<handle_t,xEvent_t>::iterator it = m_handlers.find(handle);
+// 	if(it==m_handlers.end())
+// 	{
+// 		m_handlers[handle]=e;
+// 	}
+//	ep_event.data.ptr = &e;	   //记录整个指针
 	return 0;
 }
 
