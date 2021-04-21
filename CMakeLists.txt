@@ -67,6 +67,7 @@ aux_source_directory(${LIB_S_DIR} SOURCE_SEABASE)
 aux_source_directory(${TCPSERVER_DIR} TCPSERVER)
 aux_source_directory(${PROJECT_SOURCE_DIR}/ExAppOnbase/src ExLayerSource)
 
+aux_source_directory(${PROJECT_SOURCE_DIR}/modulecom modulecomcpp)
 
 #动态库
 add_library(seabase SHARED ${SOURCE_SEABASE})
@@ -81,11 +82,20 @@ endif()
 #target_include_directories(ExAppLayer PUBLIC ${PROJECT_SOURCE_DIR}/ExAppOnbase/include)
 #target_link_libraries(ExAppLayer seabase_static)
 if(WIN32)
-	target_link_directories(ExAppLayer PUBLIC ${PROJECT_SOURCE_DIR}/base/curl7.65.1/windows/x86-debug-static/lib)
-	target_link_libraries(ExAppLayer libcurl_a_debug)
+	#target_link_directories(ExAppLayer PUBLIC ${PROJECT_SOURCE_DIR}/base/curl7.65.1/windows/x86-debug-static/lib)
+	#target_link_libraries(ExAppLayer libcurl_a_debug)
 endif()
 
 #可执行程序
+if(WIN32)
+link_directories(${PROJECT_SOURCE_DIR}/base/openssl/lib/linux/lib ${PROJECT_SOURCE_DIR}/base/sqlite3/lib/linux)
+add_executable(modulecom ${modulecomcpp})
+set(modulecomlib seabase  crypto sqlite3)
+target_link_libraries(modulecom  ${modulecomlib})
+target_include_directories(modulecom PUBLIC ${PROJECT_SOURCE_DIR}/base/openssl/include)
+else()
+add_executable(modulecom ${modulecomcpp})
+endif()
 add_executable(tcpserver1 ${TCPSERVER})
 target_link_libraries(tcpserver1 seabase_static pthread)
 #test/moduletest
